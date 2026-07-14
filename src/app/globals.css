@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/* ── Base ── */
+html {
+  scroll-behavior: auto;
+  /* precise scroll tracking for animation */
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* ── Loader Ring ── */
+.loader-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.loader-ring svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.loader-ring circle {
+  fill: none;
+  stroke-width: 3;
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.loader-ring .loader-progress {
+  stroke: #6ee7b7;
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.2s ease;
+}
+
+/* ── Scroll Hint Mouse ── */
+.scroll-mouse {
+  width: 24px;
+  height: 38px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  position: relative;
+}
+
+.scroll-wheel {
+  width: 3px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 2px;
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: scrollWheel 2s ease-in-out infinite;
+}
+
+@keyframes scrollWheel {
+
+  0%,
+  100% {
+    top: 7px;
+    opacity: 1;
+  }
+
+  50% {
+    top: 20px;
+    opacity: 0.3;
+  }
+}
+
+/* ── Progress Bar ── */
+#progress-fill {
+  background: linear-gradient(90deg, #6ee7b7, #34d399, #059669);
+  box-shadow: 0 0 10px rgba(110, 231, 183, 0.4);
+}
