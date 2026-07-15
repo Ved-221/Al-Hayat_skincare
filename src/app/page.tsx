@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { PRODUCTS } from "@/data/products";
 
-const TOTAL_FRAMES = 50;
+const TOTAL_FRAMES = 63;
 const FRAME_PREFIX = "ezgif-frame-";
 const FRAME_EXT = ".png";
 
@@ -157,9 +157,9 @@ export default function Home() {
   const imagesRef = useRef<HTMLImageElement[]>([]);
   const [loadedCount, setLoadedCount] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [currentFrame, setCurrentFrame] = useState(0);
-  const [scrollFraction, setScrollFraction] = useState(0);
-  const [showScrollHint, setShowScrollHint] = useState(true);
+  const currentFrameRef = useRef(0);
+  const progressFillRef = useRef<HTMLDivElement>(null);
+  const scrollHintRef = useRef<HTMLDivElement>(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [productsList, setProductsList] = useState(PRODUCTS);
 
@@ -202,30 +202,37 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Load all frames
+  // Load and decode all frames for hardware-accelerated, stutter-free rendering
   useEffect(() => {
     let loaded = 0;
     const images: HTMLImageElement[] = [];
+
+    const handleFrameLoaded = () => {
+      loaded++;
+      setLoadedCount(loaded);
+      if (loaded === TOTAL_FRAMES) {
+        setIsLoaded(true);
+      }
+    };
 
     for (let i = 0; i < TOTAL_FRAMES; i++) {
       const img = new Image();
       img.src = `/${FRAME_PREFIX}${padNumber(i + 1)}${FRAME_EXT}`;
 
       img.onload = () => {
-        loaded++;
-        setLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) {
-          setIsLoaded(true);
+        if (typeof img.decode === "function") {
+          img.decode()
+            .then(handleFrameLoaded)
+            .catch(() => {
+              // Fallback to normal loading if decode fails
+              handleFrameLoaded();
+            });
+        } else {
+          handleFrameLoaded();
         }
       };
 
-      img.onerror = () => {
-        loaded++;
-        setLoadedCount(loaded);
-        if (loaded === TOTAL_FRAMES) {
-          setIsLoaded(true);
-        }
-      };
+      img.onerror = handleFrameLoaded;
 
       images[i] = img;
     }
@@ -285,8 +292,8 @@ export default function Home() {
     }
   }, [isLoaded, introPlaying]);
 
-  // Handle canvas drawing
-  const drawFrame = (index: number) => {
+  // Handle canvas drawing (stabilized with useCallback to prevent re-creation)
+  const drawFrame = useCallback((index: number) => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
@@ -327,9 +334,9 @@ export default function Home() {
       dw,
       dh
     );
-  };
+  }, []);
 
-  // Resize handler
+  // Resize handler (remains registered without event listener churn)
   useEffect(() => {
     const resizeCanvas = () => {
       const canvas = canvasRef.current;
@@ -342,7 +349,7 @@ export default function Home() {
       canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawFrame(currentFrame);
+      drawFrame(currentFrameRef.current);
     };
 
     window.addEventListener("resize", resizeCanvas);
@@ -351,9 +358,10 @@ export default function Home() {
     }
 
     return () => window.removeEventListener("resize", resizeCanvas);
-  }, [isLoaded, currentFrame]);
+  }, [isLoaded, drawFrame]);
 
   // Scroll handler — animation scrubs over scrollDistance pixels, then site content appears
+  // Optimized: Zero React re-renders during scrolling (uses refs and direct DOM manipulation)
   useEffect(() => {
     if (!isLoaded || introPlaying) return;
 
@@ -369,17 +377,25 @@ export default function Home() {
         TOTAL_FRAMES - 1
       );
 
-      if (frameIndex !== currentFrame) {
-        setCurrentFrame(frameIndex);
+      if (frameIndex !== currentFrameRef.current) {
+        currentFrameRef.current = frameIndex;
         drawFrame(frameIndex);
       }
 
-      setScrollFraction(fraction);
+      if (progressFillRef.current) {
+        progressFillRef.current.style.width = `${fraction * 100}%`;
+      }
 
-      if (scrollTop > 100) {
-        setShowScrollHint(false);
-      } else {
-        setShowScrollHint(true);
+      if (scrollHintRef.current) {
+        if (scrollTop > 100) {
+          scrollHintRef.current.style.opacity = "0";
+          scrollHintRef.current.style.transform = "translate(-50%, 20px)";
+          scrollHintRef.current.style.pointerEvents = "none";
+        } else {
+          scrollHintRef.current.style.opacity = "1";
+          scrollHintRef.current.style.transform = "translate(-50%, 0)";
+          scrollHintRef.current.style.pointerEvents = "auto";
+        }
       }
     };
 
@@ -397,7 +413,7 @@ export default function Home() {
     onScroll();
 
     return () => window.removeEventListener("scroll", onScrollThrottled);
-  }, [isLoaded, currentFrame, introPlaying]);
+  }, [isLoaded, introPlaying, drawFrame]);
 
   const loadingPercentage = TOTAL_FRAMES > 0 ? loadedCount / TOTAL_FRAMES : 0;
   const circumference = 2 * Math.PI * 45;
@@ -427,7 +443,8 @@ export default function Home() {
 
       {/* ── Scroll Hint ── */}
       <div
-        className={`fixed bottom-12 left-1/2 -translate-x-1/2 z-[90] transition-all duration-500 ${showScrollHint && isLoaded && !introPlaying ? "opacity-100" : "opacity-0 translate-y-5 pointer-events-none"
+        ref={scrollHintRef}
+        className={`fixed bottom-12 left-1/2 -translate-x-1/2 z-[90] transition-all duration-500 ${isLoaded && !introPlaying ? "opacity-100" : "opacity-0 translate-y-5 pointer-events-none"
           }`}
       >
         <div className="flex flex-col items-center gap-3">
@@ -444,9 +461,10 @@ export default function Home() {
           }`}
       >
         <div
+          ref={progressFillRef}
           id="progress-fill"
           className="h-full rounded-r-[2px] transition-[width] duration-75 ease-linear"
-          style={{ width: `${scrollFraction * 100}%` }}
+          style={{ width: "0%" }}
         />
       </div>
 

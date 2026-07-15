@@ -28,7 +28,7 @@ export default function TopNavBar() {
     }
 
     const handleScroll = () => {
-      const scrollDistance = 1250; // matches TOTAL_FRAMES * pixelsPerFrame in page.tsx
+      const scrollDistance = 1575; // matches TOTAL_FRAMES * pixelsPerFrame in page.tsx
       setIsVisible(window.scrollY >= scrollDistance);
     };
 
