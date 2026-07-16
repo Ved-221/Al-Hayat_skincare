@@ -54,10 +54,17 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body style={{ background: "#fff8f1", color: "#1e1b16", overflowX: "hidden" }}>
-        <TopNavBar />
+      <body
+        style={{
+          background: "#fff8f1",
+          color: "#1e1b16",
+          overflowX: "hidden",
+        }}
+       >
+        {/*
+          Hide website navbar & WhatsApp button on admin routes
+        */}
         {children}
-        <WhatsAppButton />
       </body>
     </html>
   );
