@@ -17,7 +17,17 @@ export interface DbProduct {
   id: number;
   name: string;
   slug: string;
-  category: string;
+  /** @deprecated Use category_id FK instead. Retained for backward compatibility. */
+  category: string | null;
+  category_id: string | null;
+  categories?: {
+    id: string;
+    name: string;
+    slug: string;
+    thumbnail_url: string | null;
+    visibility: string;
+    is_featured: boolean;
+  } | null;
   desc: string;
   price: string;
   price_original: string;
@@ -42,8 +52,12 @@ export interface DbProduct {
 // ---------------------------------------------------------------------------
 export type ProductPayload = Omit<
   DbProduct,
-  "id" | "created_at" | "updated_at"
->;
+  "id" | "created_at" | "updated_at" | "categories" | "category"
+> & {
+  category_id: string;
+  /** @deprecated Fallback category string for legacy reads */
+  category?: string | null;
+};
 
 // ---------------------------------------------------------------------------
 // Read helpers
@@ -53,7 +67,7 @@ export async function getAdminProducts(): Promise<DbProduct[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("*, categories(id, name, slug, thumbnail_url, visibility, is_featured)")
     .order("id", { ascending: true });
 
   if (error) throw new Error(`Failed to fetch products: ${error.message}`);
@@ -64,7 +78,7 @@ export async function getAdminProductById(id: number): Promise<DbProduct> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("*, categories(id, name, slug, thumbnail_url, visibility, is_featured)")
     .eq("id", id)
     .single();
 
@@ -82,7 +96,7 @@ export async function createProduct(payload: ProductPayload): Promise<DbProduct>
   const { data, error } = await supabase
     .from("products")
     .insert(payload)
-    .select()
+    .select("*, categories(id, name, slug, thumbnail_url, visibility, is_featured)")
     .single();
 
   if (error || !data)
@@ -99,7 +113,7 @@ export async function updateProduct(
     .from("products")
     .update({ ...payload, updated_at: new Date().toISOString() })
     .eq("id", id)
-    .select()
+    .select("*, categories(id, name, slug, thumbnail_url, visibility, is_featured)")
     .single();
 
   if (error || !data)
@@ -120,3 +134,92 @@ export async function deleteProduct(id: number): Promise<void> {
     throw new Error(`Failed to delete product id=${id}: ${error.message}`);
   }
 }
+
+// ============================================================================
+// DASHBOARD & ANALYTICS HELPERS
+// ============================================================================
+
+export async function getProductStats(): Promise<{ totalProducts: number }> {
+  const supabase = await createClient();
+
+  const { count, error } = await supabase
+    .from("products")
+    .select("id", { count: "exact", head: true });
+
+  if (error) {
+    console.error("Error counting products:", error.message);
+  }
+
+  return { totalProducts: count ?? 0 };
+}
+
+export async function getLowStockProducts(limit = 5): Promise<DbProduct[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, categories(id, name, slug, thumbnail_url, visibility, is_featured)")
+    .neq("stock_status", "in_stock")
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Failed to fetch low stock products:", error.message);
+    return [];
+  }
+
+  return (data as DbProduct[]) ?? [];
+}
+
+export async function getRecentProducts(limit = 5): Promise<DbProduct[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("*, categories(id, name, slug, thumbnail_url, visibility, is_featured)")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error("Failed to fetch recent products:", error.message);
+    return [];
+  }
+
+  return (data as DbProduct[]) ?? [];
+}
+
+// ============================================================================
+// MIGRATION AUDIT & VERIFICATION
+// ============================================================================
+
+export interface CategoryMigrationReport {
+  totalProducts: number;
+  migratedCount: number;
+  unmigratedCount: number;
+  isComplete: boolean;
+  unmigratedProducts?: { id: number; name: string; category: string | null }[];
+}
+
+export async function verifyCategoryMigrationIntegrity(): Promise<CategoryMigrationReport> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("products")
+    .select("id, name, category, category_id");
+
+  if (error) {
+    throw new Error(`Failed to verify category migration integrity: ${error.message}`);
+  }
+
+  const products = (data || []) as { id: number; name: string; category: string | null; category_id: string | null }[];
+  const unmigrated = products.filter((p) => !p.category_id);
+
+  return {
+    totalProducts: products.length,
+    migratedCount: products.length - unmigrated.length,
+    unmigratedCount: unmigrated.length,
+    isComplete: unmigrated.length === 0,
+    unmigratedProducts: unmigrated.map((p) => ({ id: p.id, name: p.name, category: p.category })),
+  };
+}
+

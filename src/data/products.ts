@@ -1,6 +1,10 @@
 export interface Product {
+  id?: number | string;
   name: string;
+  /** @deprecated Use categoryId / relational category name instead */
   category: string;
+  categoryId?: string | null;
+  categorySlug?: string | null;
   desc: string;
   price: string;
   priceOriginal: string;

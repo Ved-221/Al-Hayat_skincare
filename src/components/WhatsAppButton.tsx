@@ -1,6 +1,6 @@
 "use client";
 
-const WHATSAPP_NUMBER = "919876543210";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918796513654";
 
 export default function WhatsAppButton() {
   const message = encodeURIComponent("Hello! I'd like to order from AL-HAYAT.");

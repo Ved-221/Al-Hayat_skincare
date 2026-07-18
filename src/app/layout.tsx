@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Playfair_Display, Dancing_Script, Inter } from "next/font/google";
 import "./globals.css";
-import TopNavBar from "@/components/TopNavBar";
-import WhatsAppButton from "@/components/WhatsAppButton";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -60,10 +58,7 @@ export default function RootLayout({
           color: "#1e1b16",
           overflowX: "hidden",
         }}
-       >
-        {/*
-          Hide website navbar & WhatsApp button on admin routes
-        */}
+      >
         {children}
       </body>
     </html>

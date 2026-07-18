@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-const WHATSAPP_NUMBER = "919876543210";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918796513654";
 const WHATSAPP_GREETING = encodeURIComponent("Hello! I'd like to learn more about AL-HAYAT products.");
 
 export default function Footer() {

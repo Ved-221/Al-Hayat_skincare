@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS products (
   name TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
   category TEXT NOT NULL,
-  desc TEXT NOT NULL,
+  "desc" TEXT NOT NULL,
   price TEXT NOT NULL,
   price_original TEXT NOT NULL,
   discount TEXT NOT NULL,
@@ -63,22 +63,403 @@ ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
 -- 6. CREATE RLS POLICIES
 
 -- Products Policies: Anyone can read/write/update to allow seeding
+DROP POLICY IF EXISTS "Allow public read access to products" ON products;
 CREATE POLICY "Allow public read access to products" ON products
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Allow public write access to products" ON products;
 CREATE POLICY "Allow public write access to products" ON products
   FOR INSERT WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow public update access to products" ON products;
 CREATE POLICY "Allow public update access to products" ON products
   FOR UPDATE USING (true);
 
 -- Reviews Policies: Anyone can read approved reviews, anyone can submit a review
+DROP POLICY IF EXISTS "Allow public read access to approved reviews" ON reviews;
 CREATE POLICY "Allow public read access to approved reviews" ON reviews
   FOR SELECT USING (approved = true);
 
+DROP POLICY IF EXISTS "Allow public write access to reviews" ON reviews;
 CREATE POLICY "Allow public write access to reviews" ON reviews
   FOR INSERT WITH CHECK (true);
 
 -- Contact Messages Policies: Only authenticated can read, anyone can insert
+DROP POLICY IF EXISTS "Allow public insert to contact_messages" ON contact_messages;
 CREATE POLICY "Allow public insert to contact_messages" ON contact_messages
   FOR INSERT WITH CHECK (true);
+
+-- ==============================================================================
+-- 7. ORDERS MODULE SCHEMA (Phase 4A & 4B)
+-- ==============================================================================
+
+-- Create order_status Enum
+DO $$ BEGIN
+    CREATE TYPE order_status AS ENUM (
+        'Pending',
+        'Accepted',
+        'Preparing',
+        'Ready',
+        'Completed',
+        'Cancelled'
+    );
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+-- Create order_number Sequence (starts at 1001 for human-readable numbers e.g. AH1001)
+CREATE SEQUENCE IF NOT EXISTS order_number_seq START 1001;
+
+-- Create orders Table
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_number TEXT NOT NULL UNIQUE DEFAULT 'AH' || nextval('order_number_seq')::TEXT,
+    
+    -- Customer Info
+    customer_name TEXT NOT NULL,
+    customer_phone TEXT NOT NULL,
+    customer_email TEXT,
+    customer_address TEXT NOT NULL,
+    customer_landmark TEXT,
+    customer_city TEXT NOT NULL,
+    customer_state TEXT NOT NULL,
+    customer_pincode TEXT NOT NULL,
+    notes TEXT,
+
+    -- Totals & Discounts
+    subtotal NUMERIC(10,2) NOT NULL,
+    discount_type TEXT,
+    discount_value NUMERIC(10,2),
+    discount_amount NUMERIC(10,2) NOT NULL DEFAULT 0,
+    delivery_charge NUMERIC(10,2) NOT NULL DEFAULT 0,
+    total_amount NUMERIC(10,2) NOT NULL,
+
+    -- Status & Lifecycle
+    status order_status NOT NULL DEFAULT 'Pending',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    accepted_at TIMESTAMPTZ,
+    completed_at TIMESTAMPTZ,
+    cancelled_at TIMESTAMPTZ,
+
+    -- Admin & Audit
+    updated_by UUID REFERENCES auth.users(id),
+    deleted_at TIMESTAMPTZ
+);
+
+-- Create order_items Table
+CREATE TABLE IF NOT EXISTS order_items (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    product_id BIGINT NOT NULL REFERENCES products(id),
+    
+    -- Snapshots
+    product_name TEXT NOT NULL,
+    product_price NUMERIC(10,2) NOT NULL,
+    
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    line_total NUMERIC(10,2) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Create Indexes
+CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_created_at ON orders(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_orders_customer_phone ON orders(customer_phone);
+
+-- Enable RLS
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies for orders
+DROP POLICY IF EXISTS "Allow public insert to orders" ON orders;
+CREATE POLICY "Allow public insert to orders" ON orders
+    FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow admins read access to orders" ON orders;
+CREATE POLICY "Allow admins read access to orders" ON orders
+    FOR SELECT USING (auth.role() = 'authenticated');
+
+DROP POLICY IF EXISTS "Allow admins update access to orders" ON orders;
+CREATE POLICY "Allow admins update access to orders" ON orders
+    FOR UPDATE USING (auth.role() = 'authenticated');
+
+-- RLS Policies for order_items
+DROP POLICY IF EXISTS "Allow public insert to order_items" ON order_items;
+CREATE POLICY "Allow public insert to order_items" ON order_items
+    FOR INSERT WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow admins read access to order_items" ON order_items;
+CREATE POLICY "Allow admins read access to order_items" ON order_items
+    FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Atomic Order Creation Function (RPC)
+CREATE OR REPLACE FUNCTION create_order_with_items(
+    order_data JSONB,
+    items_data JSONB
+) RETURNS UUID AS $$
+DECLARE
+    new_order_id UUID;
+    item JSONB;
+BEGIN
+    INSERT INTO orders (
+        customer_name, customer_phone, customer_email, customer_address, 
+        customer_landmark, customer_city, customer_state, customer_pincode, 
+        notes, subtotal, discount_type, discount_value, discount_amount, 
+        delivery_charge, total_amount
+    ) VALUES (
+        order_data->>'customer_name',
+        order_data->>'customer_phone',
+        order_data->>'customer_email',
+        order_data->>'customer_address',
+        order_data->>'customer_landmark',
+        order_data->>'customer_city',
+        order_data->>'customer_state',
+        order_data->>'customer_pincode',
+        order_data->>'notes',
+        (order_data->>'subtotal')::NUMERIC,
+        order_data->>'discount_type',
+        (order_data->>'discount_value')::NUMERIC,
+        COALESCE((order_data->>'discount_amount')::NUMERIC, 0),
+        COALESCE((order_data->>'delivery_charge')::NUMERIC, 0),
+        (order_data->>'total_amount')::NUMERIC
+    ) RETURNING id INTO new_order_id;
+
+    FOR item IN SELECT * FROM jsonb_array_elements(items_data)
+    LOOP
+        INSERT INTO order_items (
+            order_id, product_id, product_name, product_price, quantity, line_total
+        ) VALUES (
+            new_order_id,
+            (item->>'product_id')::BIGINT,
+            item->>'product_name',
+            (item->>'product_price')::NUMERIC,
+            (item->>'quantity')::INTEGER,
+            (item->>'line_total')::NUMERIC
+        );
+    END LOOP;
+
+    RETURN new_order_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ==============================================================================
+-- 8. CATEGORIES MODULE SCHEMA (Phase 7)
+-- ==============================================================================
+
+-- Step 1: Create category_visibility Enum
+DO $$ BEGIN
+    CREATE TYPE category_visibility AS ENUM ('visible', 'hidden');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+-- Step 2: Create categories Table
+CREATE TABLE IF NOT EXISTS categories (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    description TEXT,
+    thumbnail_url TEXT,
+    banner_url TEXT,
+    alt_text TEXT,
+    visibility category_visibility NOT NULL DEFAULT 'visible',
+    is_featured BOOLEAN NOT NULL DEFAULT false,
+    sort_order INTEGER NOT NULL DEFAULT 0,
+
+    -- SEO Fields
+    meta_title TEXT,
+    meta_description TEXT,
+    meta_keywords TEXT,
+
+    -- Timestamps
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    deleted_at TIMESTAMPTZ
+);
+
+-- Step 3: Create Indexes
+CREATE INDEX IF NOT EXISTS idx_categories_slug ON categories(slug);
+CREATE INDEX IF NOT EXISTS idx_categories_visibility ON categories(visibility);
+CREATE INDEX IF NOT EXISTS idx_categories_is_featured ON categories(is_featured);
+CREATE INDEX IF NOT EXISTS idx_categories_sort_order ON categories(sort_order);
+CREATE INDEX IF NOT EXISTS idx_categories_created_at ON categories(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_categories_deleted_at ON categories(deleted_at);
+
+-- Step 4: Enable RLS
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+
+-- Step 5: RLS Policies
+
+-- Public: read only visible, non-deleted categories
+DROP POLICY IF EXISTS "Allow public read visible categories" ON categories;
+CREATE POLICY "Allow public read visible categories" ON categories
+    FOR SELECT USING (visibility = 'visible' AND deleted_at IS NULL);
+
+-- Admins: full SELECT (including hidden/deleted for management)
+DROP POLICY IF EXISTS "Allow admin full read categories" ON categories;
+CREATE POLICY "Allow admin full read categories" ON categories
+    FOR SELECT USING (auth.role() = 'authenticated');
+
+-- Admins: INSERT
+DROP POLICY IF EXISTS "Allow admin insert categories" ON categories;
+CREATE POLICY "Allow admin insert categories" ON categories
+    FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+
+-- Admins: UPDATE
+DROP POLICY IF EXISTS "Allow admin update categories" ON categories;
+CREATE POLICY "Allow admin update categories" ON categories
+    FOR UPDATE USING (auth.role() = 'authenticated');
+
+-- Admins: DELETE (soft delete enforced at service layer)
+DROP POLICY IF EXISTS "Allow admin delete categories" ON categories;
+CREATE POLICY "Allow admin delete categories" ON categories
+    FOR DELETE USING (auth.role() = 'authenticated');
+
+-- ==============================================================================
+-- 9. CATEGORIES MIGRATION (Phase 7 — Idempotent)
+-- ==============================================================================
+-- Migrates existing products.category TEXT values to the relational categories
+-- table and populates products.category_id FK. Safe to run multiple times.
+
+-- Step 6: Auto-update updated_at trigger for categories
+CREATE OR REPLACE FUNCTION update_categories_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_categories_updated_at ON categories;
+CREATE TRIGGER trg_categories_updated_at
+    BEFORE UPDATE ON categories
+    FOR EACH ROW
+    EXECUTE FUNCTION update_categories_updated_at();
+
+-- Step 7: Add category_id column to products (if not exists)
+DO $$ BEGIN
+    ALTER TABLE products ADD COLUMN category_id UUID;
+EXCEPTION
+    WHEN duplicate_column THEN null;
+END $$;
+
+-- Step 8: Auto-populate categories from distinct product category names
+-- Handles slug collisions by appending numeric suffixes (-2, -3, etc.)
+DO $$
+DECLARE
+    rec RECORD;
+    base_slug TEXT;
+    final_slug TEXT;
+    suffix INTEGER;
+    sort INTEGER := 10;
+BEGIN
+    FOR rec IN
+        SELECT DISTINCT category
+        FROM products
+        WHERE category IS NOT NULL AND category != ''
+        ORDER BY category
+    LOOP
+        base_slug := lower(regexp_replace(regexp_replace(rec.category, '[^a-zA-Z0-9 ]', '', 'g'), '\s+', '-', 'g'));
+        final_slug := base_slug;
+        suffix := 1;
+
+        -- Loop until we find a unique slug
+        WHILE EXISTS (SELECT 1 FROM categories WHERE slug = final_slug) LOOP
+            suffix := suffix + 1;
+            final_slug := base_slug || '-' || suffix;
+        END LOOP;
+
+        -- Only insert if this category name doesn't already exist
+        IF NOT EXISTS (SELECT 1 FROM categories WHERE name = rec.category) THEN
+            INSERT INTO categories (name, slug, sort_order)
+            VALUES (rec.category, final_slug, sort);
+        END IF;
+
+        sort := sort + 10;
+    END LOOP;
+END $$;
+
+-- Step 9: Populate products.category_id from matching categories.name
+UPDATE products
+SET category_id = c.id
+FROM categories c
+WHERE products.category = c.name
+  AND products.category_id IS NULL;
+
+-- Step 10: Add FK constraint (if not exists)
+-- NOTE: category_id is nullable during initial migration to allow safe transition.
+-- See `supabase-migration-phase7-part4.sql` for audit and constraint enforcement steps.
+DO $$ BEGIN
+    ALTER TABLE products
+        ADD CONSTRAINT fk_products_category_id
+        FOREIGN KEY (category_id) REFERENCES categories(id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+-- Step 11: Create index on products.category_id
+CREATE INDEX IF NOT EXISTS idx_products_category_id ON products(category_id);
+
+-- Step 12: Mark old column as deprecated (comment only, column retained)
+-- NOTE: category_id is nullable during migration. In Phase 7 Part 4, once all
+-- products have been verified via `verifyCategoryMigrationIntegrity()` or
+-- `supabase-migration-phase7-part4.sql`, enforce NOT NULL:
+--   ALTER TABLE products ALTER COLUMN category_id SET NOT NULL;
+COMMENT ON COLUMN products.category IS 'DEPRECATED (Phase 7): Use category_id FK instead. Will be removed in a future migration.';
+
+-- Step 13: Atomic reorder RPC for categories
+-- Accepts a JSON array of {id, sort_order} objects and applies them atomically.
+CREATE OR REPLACE FUNCTION reorder_categories(
+    items JSONB
+) RETURNS VOID AS $$
+DECLARE
+    item JSONB;
+BEGIN
+    FOR item IN SELECT * FROM jsonb_array_elements(items)
+    LOOP
+        UPDATE categories
+        SET sort_order = (item->>'sort_order')::INTEGER
+        WHERE id = (item->>'id')::UUID
+          AND deleted_at IS NULL;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Step 14: Atomic product transfer and category deletion RPC
+-- Transfers all products from p_source_id to p_target_id and soft-deletes p_source_id in a single transaction.
+CREATE OR REPLACE FUNCTION transfer_products_and_delete_category(
+    p_source_id UUID,
+    p_target_id UUID
+) RETURNS VOID AS $$
+DECLARE
+    v_target_name TEXT;
+BEGIN
+    -- Verify target category exists and is active
+    SELECT name INTO v_target_name
+    FROM categories
+    WHERE id = p_target_id AND deleted_at IS NULL;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'Target category % not found or is deleted.', p_target_id;
+    END IF;
+
+    IF p_source_id = p_target_id THEN
+        RAISE EXCEPTION 'Source and target categories cannot be the same.';
+    END IF;
+
+    -- Update products to point to target category (and keep deprecated text field in sync)
+    UPDATE products
+    SET category_id = p_target_id,
+        category = v_target_name,
+        updated_at = NOW()
+    WHERE category_id = p_source_id;
+
+    -- Soft-delete the source category
+    UPDATE categories
+    SET deleted_at = NOW(),
+        updated_at = NOW()
+    WHERE id = p_source_id AND deleted_at IS NULL;
+END;
+$$ LANGUAGE plpgsql;

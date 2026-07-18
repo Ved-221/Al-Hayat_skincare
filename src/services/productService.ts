@@ -2,19 +2,22 @@ import { supabase } from "@/lib/supabase";
 import { PRODUCTS, Product } from "@/data/products";
 
 // Maps database fields back to the local Product interface format
-function mapDbProduct(dbProduct: any): Product {
+export function mapDbProduct(dbProduct: any): Product {
   return {
+    id: dbProduct.id,
     name: dbProduct.name,
-    category: dbProduct.category,
-    desc: dbProduct.desc,
-    price: dbProduct.price,
+    category: dbProduct.categories?.name || dbProduct.category || "",
+    categoryId: dbProduct.category_id || dbProduct.categories?.id || null,
+    categorySlug: dbProduct.categories?.slug || null,
+    desc: dbProduct.desc || "",
+    price: dbProduct.price || "",
     priceOriginal: dbProduct.price_original || dbProduct.priceOriginal || "",
     discount: dbProduct.discount || "",
-    badge: dbProduct.badge,
+    badge: dbProduct.badge || null,
     ingredients: dbProduct.ingredients || [],
-    benefit: dbProduct.benefit,
-    img: dbProduct.img,
-    slug: dbProduct.slug,
+    benefit: dbProduct.benefit || "",
+    img: dbProduct.img || "",
+    slug: dbProduct.slug || "",
     suitableFor: dbProduct.suitable_for || dbProduct.suitableFor || "",
     tagline: dbProduct.tagline || "",
     detailedIngredients: dbProduct.detailed_ingredients || dbProduct.detailedIngredients || [],
@@ -27,7 +30,7 @@ export async function getProducts(): Promise<Product[]> {
   try {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("*, categories(id, name, slug)")
       .order("id", { ascending: true });
 
     if (error || !data || data.length === 0) {
@@ -46,7 +49,7 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
     const { data, error } = await supabase
       .from("products")
-      .select("*")
+      .select("*, categories(id, name, slug)")
       .eq("slug", slug)
       .maybeSingle();
 
@@ -59,5 +62,25 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   } catch (err: any) {
     console.error(`Failed to fetch product by slug "${slug}" from Supabase:`, err);
     return PRODUCTS.find((p) => p.slug === slug) || null;
+  }
+}
+
+export async function getProductsByCategory(categorySlug: string): Promise<Product[]> {
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, categories!inner(id, name, slug)")
+      .eq("categories.slug", categorySlug)
+      .order("id", { ascending: true });
+
+    if (error || !data) {
+      console.warn(`Failed to fetch products for category slug "${categorySlug}":`, error?.message);
+      return [];
+    }
+
+    return data.map(mapDbProduct);
+  } catch (err: any) {
+    console.error(`Error fetching products for category slug "${categorySlug}":`, err);
+    return [];
   }
 }

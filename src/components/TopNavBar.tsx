@@ -2,24 +2,42 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import CartDrawer from "./CartDrawer";
+import { useCartStore } from "@/store/cartStore";
+import CategoryNavigation from "@/components/storefront/categories/CategoryNavigation";
+import type { Category } from "@/types/category";
 
-const WHATSAPP_NUMBER = "919876543210";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918796513654";
 const WHATSAPP_GREETING = encodeURIComponent("Hello, I'd like to learn more about AL-HAYAT products.");
 
-const NAV_LINKS = [
+const NAV_LINKS_BEFORE = [
   { label: "Home", href: "/" },
+  { label: "Products", href: "/products" },
+];
+
+const NAV_LINKS_AFTER = [
   { label: "About", href: "/about" },
   { label: "Ingredients", href: "/ingredients" },
-  { label: "Products", href: "/products" },
   { label: "Reviews", href: "/reviews" },
   { label: "Contact", href: "/contact" },
 ];
 
-export default function TopNavBar() {
+interface TopNavBarProps {
+  categories?: Category[];
+}
+
+export default function TopNavBar({ categories = [] }: TopNavBarProps) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(pathname !== "/");
+  const { getTotalItems } = useCartStore();
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (pathname !== "/") {
@@ -59,11 +77,37 @@ export default function TopNavBar() {
           style={{ maxWidth: "1280px" }}
         >
           {/* ─── Left: Desktop Nav Links ─── */}
-          <nav className="hidden md:flex items-center gap-6 flex-1">
-            {NAV_LINKS.map((link) => {
+          <nav className="hidden md:flex items-center gap-5 lg:gap-6 flex-1">
+            {NAV_LINKS_BEFORE.map((link) => {
               const isActive =
                 (link.href === "/" && pathname === "/") ||
-                (link.href !== "/" && pathname.startsWith(link.href));
+                (link.href !== "/" && pathname.startsWith(link.href) && !pathname.startsWith("/products/category"));
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  style={{
+                    fontFamily: "'Inter', sans-serif",
+                    fontSize: "13px",
+                    fontWeight: isActive ? 700 : 400,
+                    color: isActive ? "#b22a2b" : "#47483a",
+                    textDecoration: "none",
+                    borderBottom: isActive ? "2px solid #b22a2b" : "2px solid transparent",
+                    paddingBottom: "2px",
+                    transition: "color 0.2s, border-color 0.2s",
+                  }}
+                  className="hover:text-[#b22a2b] transition-colors"
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+
+            {/* Dynamic Categories Dropdown */}
+            <CategoryNavigation categories={categories} />
+
+            {NAV_LINKS_AFTER.map((link) => {
+              const isActive = pathname.startsWith(link.href);
               return (
                 <Link
                   key={link.label}
@@ -137,10 +181,39 @@ export default function TopNavBar() {
               </svg>
               Order on WhatsApp
             </a>
+            
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative p-2 text-[#434b01] hover:text-[#b22a2b] transition-colors"
+              aria-label="Cart"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "24px" }}>shopping_bag</span>
+              {mounted && getTotalItems() > 0 && (
+                <span 
+                  className="absolute top-0 right-0 w-4 h-4 bg-[#b22a2b] text-white text-[10px] font-bold flex items-center justify-center rounded-full"
+                >
+                  {getTotalItems()}
+                </span>
+              )}
+            </button>
           </div>
 
-          {/* Mobile right side — WhatsApp icon only */}
+          {/* Mobile right side — WhatsApp icon & Cart */}
           <div className="md:hidden flex items-center gap-2 flex-1 justify-end">
+            <button
+              onClick={() => setCartOpen(true)}
+              className="relative p-2 text-[#434b01] transition-colors"
+              aria-label="Cart"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "24px" }}>shopping_bag</span>
+              {mounted && getTotalItems() > 0 && (
+                <span 
+                  className="absolute top-0 right-0 w-4 h-4 bg-[#b22a2b] text-white text-[10px] font-bold flex items-center justify-center rounded-full"
+                >
+                  {getTotalItems()}
+                </span>
+              )}
+            </button>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_GREETING}`}
               target="_blank"
@@ -199,10 +272,41 @@ export default function TopNavBar() {
         </div>
 
         <nav className="flex flex-col gap-1 flex-1">
-          {NAV_LINKS.map((link) => {
+          {NAV_LINKS_BEFORE.map((link) => {
             const isActive =
               (link.href === "/" && pathname === "/") ||
-              (link.href !== "/" && pathname.startsWith(link.href));
+              (link.href !== "/" && pathname.startsWith(link.href) && !pathname.startsWith("/products/category"));
+            return (
+              <Link
+                key={link.label}
+                href={link.href}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  fontSize: "22px",
+                  fontWeight: isActive ? 700 : 400,
+                  color: isActive ? "#b22a2b" : "#434b01",
+                  textDecoration: "none",
+                  padding: "10px 0",
+                  borderBottom: "1px solid rgba(200,199,181,0.35)",
+                  display: "block",
+                  transition: "color 0.2s",
+                }}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
+
+          {/* Dynamic Categories Mobile Accordion */}
+          <CategoryNavigation
+            categories={categories}
+            isMobile
+            onMobileClose={() => setMobileOpen(false)}
+          />
+
+          {NAV_LINKS_AFTER.map((link) => {
+            const isActive = pathname.startsWith(link.href);
             return (
               <Link
                 key={link.label}
@@ -247,6 +351,7 @@ export default function TopNavBar() {
           Order on WhatsApp
         </a>
       </div>
+      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
 }
