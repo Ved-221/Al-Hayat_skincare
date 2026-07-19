@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useCallback } from "react";
 import Link from "next/link";
-import Footer from "@/components/Footer";
 import { PRODUCTS } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import FeaturedCategoriesSection from "@/components/storefront/categories/FeaturedCategoriesSection";
@@ -1003,9 +1002,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-
-        {/* ══ FOOTER ══ */}
-        <Footer />
       </div>
     </main>
   );

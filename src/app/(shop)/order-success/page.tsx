@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Footer from "@/components/Footer";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
 import WhatsAppButton from "@/components/checkout/WhatsAppButton";
@@ -101,8 +100,6 @@ export default function OrderSuccessPage() {
           <OrderSuccessContent />
         </Suspense>
       </div>
-
-      <Footer />
     </main>
   );
 }

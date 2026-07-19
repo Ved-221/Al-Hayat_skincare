@@ -2,7 +2,6 @@
 
 import { useCartStore } from "@/store/cartStore";
 import Link from "next/link";
-import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 
 export default function CartPage() {
@@ -166,8 +165,6 @@ export default function CartPage() {
           </div>
         )}
       </div>
-
-      <Footer />
     </main>
   );
 }

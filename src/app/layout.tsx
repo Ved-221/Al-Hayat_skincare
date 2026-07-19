@@ -26,17 +26,24 @@ const dancingScript = Dancing_Script({
   weight: ["400", "500", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "AL-HAYAT | Premium Herbal Skincare & Haircare by Dr. Farheen",
-  description:
-    "AL-HAYAT by Dr. Farheen — premium herbal skincare, haircare, and lip care. Handcrafted botanical formulations. 100% natural ingredients. Order on WhatsApp.",
-  openGraph: {
-    title: "AL-HAYAT | Premium Herbal Skincare & Haircare by Dr. Farheen",
-    description:
-      "Discover premium herbal skincare and haircare crafted from nature's finest botanicals. AL-HAYAT by Dr. Farheen.",
-    type: "website",
-  },
-};
+import { getStoreSettings } from "@/services/settingsService";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getStoreSettings();
+  const fullTitle = `${settings.store_name} | ${settings.store_tagline.split(".")[0] || "Premium Botanical Care"}`;
+
+  return {
+    title: fullTitle,
+    description: settings.store_description,
+    openGraph: {
+      title: fullTitle,
+      description: settings.store_description,
+      type: "website",
+      ...(settings.logo_url ? { images: [settings.logo_url] } : {}),
+    },
+    ...(settings.favicon_url ? { icons: { icon: settings.favicon_url } } : {}),
+  };
+}
 
 export default function RootLayout({
   children,

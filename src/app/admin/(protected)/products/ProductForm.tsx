@@ -11,12 +11,16 @@
  *   - defaultValues?: pre-filled values when editing
  */
 
-import React, { useActionState, useState, useMemo } from "react";
+import React, { useActionState, useState, useEffect } from "react";
 import type { ActionResult } from "./actions";
 import type { DbProduct } from "@/services/adminProductService";
 import type { CategoryDropdownOption } from "@/types/category";
 import CategorySelector from "@/components/admin/categories/CategorySelector";
 import CategoryPreview from "@/components/admin/categories/CategoryPreview";
+import ImageUploader from "@/components/admin/ImageUploader";
+import IngredientBuilder from "@/components/admin/products/builders/IngredientBuilder";
+import DetailedBenefitBuilder from "@/components/admin/products/builders/DetailedBenefitBuilder";
+import RitualBuilder from "@/components/admin/products/builders/RitualBuilder";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -155,14 +159,23 @@ export default function ProductForm({
     return null;
   });
 
-  // Serialize JSONB arrays back to string for the textarea default value
-  const di = JSON.stringify(defaultValues?.detailed_ingredients ?? [], null, 2);
-  const db = JSON.stringify(defaultValues?.detailed_benefits ?? [], null, 2);
-  const ritual = JSON.stringify(defaultValues?.ritual ?? [], null, 2);
+  const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
   const ingredients = (defaultValues?.ingredients ?? []).join(", ");
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form action={formAction} onChangeCapture={() => setIsDirty(true)} className="space-y-6 pb-24">
       {/* Global form error */}
       {errors?._form && (
         <div className="rounded border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -287,16 +300,16 @@ export default function ProductForm({
 
       {/* ── Image ──────────────────────────────────────────────── */}
       <section className="rounded-lg border bg-white p-6">
-        <h2 className="mb-4 text-base font-semibold text-gray-900">Image</h2>
-        <Field
-          label="Image Path"
+        <h2 className="mb-4 text-base font-semibold text-gray-900">Product Image</h2>
+        <ImageUploader
           name="img"
+          label="Product Image"
           required
-          placeholder="/products/herbal-hair-oil.png"
           defaultValue={defaultValues?.img}
-          errors={errors}
-          hint="Enter the public image path. Image uploads are handled separately."
+          folder="products"
+          hint="Drag & drop or select an image file (PNG, JPG, WEBP). This image appears on product cards and details page."
         />
+        <FieldError errors={errors} field="img" />
       </section>
 
       {/* ── Inventory ──────────────────────────────────────────── */}
@@ -349,62 +362,58 @@ export default function ProductForm({
           hint="Used for the short ingredient tag list on product cards."
         />
 
-        <div className="mt-4">
-          <TextareaField
-            label="Detailed Ingredients (JSON)"
-            name="detailed_ingredients"
-            rows={6}
-            required
-            defaultValue={di}
-            errors={errors}
-            hint='Array of { "name": "...", "desc": "..." } objects.'
-          />
+        <div className="mt-6">
+          <IngredientBuilder defaultValue={defaultValues?.detailed_ingredients as any} />
+          <FieldError errors={errors} field="detailed_ingredients" />
         </div>
       </section>
 
       {/* ── Benefits ───────────────────────────────────────────── */}
       <section className="rounded-lg border bg-white p-6">
         <h2 className="mb-4 text-base font-semibold text-gray-900">Detailed Benefits</h2>
-        <TextareaField
-          label="Detailed Benefits (JSON)"
-          name="detailed_benefits"
-          rows={6}
-          required
-          defaultValue={db}
-          errors={errors}
-          hint='Array of { "icon": "spa", "title": "...", "sub": "..." } objects.'
-        />
+        <DetailedBenefitBuilder defaultValue={defaultValues?.detailed_benefits as any} />
+        <FieldError errors={errors} field="detailed_benefits" />
       </section>
 
       {/* ── Ritual ─────────────────────────────────────────────── */}
       <section className="rounded-lg border bg-white p-6">
         <h2 className="mb-4 text-base font-semibold text-gray-900">Usage Ritual</h2>
-        <TextareaField
-          label="Ritual (JSON)"
-          name="ritual"
-          rows={6}
-          required
-          defaultValue={ritual}
-          errors={errors}
-          hint='Array of { "icon": "water_drop", "step": "1. Apply", "desc": "..." } objects.'
-        />
+        <RitualBuilder defaultValue={defaultValues?.ritual as any} />
+        <FieldError errors={errors} field="ritual" />
       </section>
 
-      {/* ── Submit ─────────────────────────────────────────────── */}
-      <div className="flex items-center gap-4">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded bg-gray-900 px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-700 disabled:opacity-60"
-        >
-          {isPending ? "Saving…" : submitLabel}
-        </button>
-        <a
-          href="/admin/products"
-          className="text-sm text-gray-500 hover:text-gray-800"
-        >
-          Cancel
-        </a>
+      {/* ── Sticky Bottom Save Bar ─────────────────────────────── */}
+      <div className="sticky bottom-0 z-20 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur-md">
+        <div className="flex items-center gap-2">
+          {isDirty ? (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 border border-amber-200">
+              <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+              Unsaved changes
+            </span>
+          ) : (
+            <span className="text-xs text-gray-400">All changes saved or unchanged</span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          <a
+            href="/admin/products"
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Cancel
+          </a>
+          <button
+            type="submit"
+            disabled={isPending}
+            onClick={() => setIsDirty(false)}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-gray-900 px-6 py-2 text-xs font-semibold text-white shadow-xs hover:bg-gray-800 disabled:opacity-60 transition-all min-h-[38px]"
+          >
+            {isPending && (
+              <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+            )}
+            <span>{isPending ? "Saving Product..." : submitLabel}</span>
+          </button>
+        </div>
       </div>
     </form>
   );

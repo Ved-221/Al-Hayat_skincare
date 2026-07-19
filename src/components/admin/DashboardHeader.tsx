@@ -44,8 +44,8 @@ export default function DashboardHeader({
         <button
           onClick={onMenuClick}
           type="button"
-          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 lg:hidden"
-          aria-label="Open sidebar menu"
+          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900 lg:hidden"
+          aria-label="Open sidebar navigation menu"
         >
           <span className="material-symbols-outlined text-2xl leading-none">
             menu
@@ -53,10 +53,10 @@ export default function DashboardHeader({
         </button>
 
         {/* Breadcrumbs */}
-        <nav className="flex items-center gap-1 text-sm sm:gap-2">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm sm:gap-2">
           <Link
             href="/admin"
-            className="font-medium text-gray-500 hover:text-gray-900"
+            className="rounded-md px-1.5 py-1 font-medium text-gray-500 transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900"
           >
             Dashboard
           </Link>
@@ -69,13 +69,13 @@ export default function DashboardHeader({
 
             return (
               <div key={href} className="flex items-center gap-1 sm:gap-2">
-                <span className="text-gray-300">/</span>
+                <span className="text-gray-300 select-none">/</span>
                 {isLast ? (
-                  <span className="font-semibold text-gray-900">{label}</span>
+                  <span className="font-semibold text-gray-900 px-1 py-0.5">{label}</span>
                 ) : (
                   <Link
                     href={href}
-                    className="font-medium text-gray-500 hover:text-gray-900"
+                    className="rounded-md px-1.5 py-1 font-medium text-gray-500 transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900"
                   >
                     {label}
                   </Link>

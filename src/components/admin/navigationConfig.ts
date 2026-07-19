@@ -37,9 +37,7 @@ export const ADMIN_NAV_ITEMS: NavItemConfig[] = [
   },
   {
     label: "Settings",
-    href: "#",
+    href: "/admin/settings",
     icon: "settings",
-    disabled: true,
-    badge: "Soon",
   },
 ];

@@ -1,7 +1,6 @@
 "use client";
 
 import { useCartStore } from "@/store/cartStore";
-import Footer from "@/components/Footer";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CartSummary from "@/components/checkout/CartSummary";
@@ -117,8 +116,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-
-      <Footer />
     </main>
   );
 }

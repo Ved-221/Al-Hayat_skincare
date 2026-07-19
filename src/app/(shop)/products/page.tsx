@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense, useMemo } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
-import Footer from "@/components/Footer";
 import { PRODUCTS, type Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { getCategoriesWithProductCounts, type StorefrontCategoryWithCount } from "@/services/storefrontCategoryService";
@@ -587,8 +586,6 @@ function ProductsContent() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </main>
   );
 }

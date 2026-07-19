@@ -3,7 +3,6 @@
 import { useState, use, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Footer from "@/components/Footer";
 import { PRODUCTS, Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 
@@ -413,9 +412,6 @@ export default function ProductDetailPage({ params }: Props) {
           </div>
         </div>
       </section>
-
-      {/* ═══ FOOTER ═══ */}
-      <Footer />
     </main>
   );
 }

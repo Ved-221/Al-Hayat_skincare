@@ -37,7 +37,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       >
         {/* Brand Header */}
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-gray-100 px-6">
-          <Link href="/admin" onClick={onClose} className="flex items-center gap-2">
+          <Link
+            href="/admin"
+            onClick={onClose}
+            className="flex items-center gap-2 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 p-1 -ml-1"
+          >
             <span className="font-serif text-xl font-bold tracking-tight text-gray-900">
               AL-HAYAT
             </span>
@@ -49,14 +53,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           {/* Close button on mobile */}
           <button
             onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 lg:hidden"
+            aria-label="Close navigation menu"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-900 lg:hidden"
           >
             <span className="material-symbols-outlined text-xl">close</span>
           </button>
         </div>
 
         {/* Navigation Items */}
-        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+        <nav className="flex-1 space-y-1.5 overflow-y-auto px-3 py-4">
           <div className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
             Menu
           </div>
@@ -71,7 +76,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
               return (
                 <div
                   key={item.label}
-                  className="flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300 cursor-not-allowed select-none"
+                  className="flex min-h-[44px] items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium text-gray-300 cursor-not-allowed select-none"
                 >
                   <div className="flex items-center gap-3">
                     <span className="material-symbols-outlined text-xl text-gray-300">
@@ -93,7 +98,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 key={item.label}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={`flex min-h-[44px] items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2 ${
                   isActive
                     ? "bg-gray-900 text-white shadow-sm"
                     : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
@@ -130,7 +135,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           <Link
             href="/"
             target="_blank"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900"
+            className="flex min-h-[44px] items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
           >
             <span className="material-symbols-outlined text-xl text-gray-400">
               open_in_new

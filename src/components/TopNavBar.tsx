@@ -7,6 +7,7 @@ import CartDrawer from "./CartDrawer";
 import { useCartStore } from "@/store/cartStore";
 import CategoryNavigation from "@/components/storefront/categories/CategoryNavigation";
 import type { Category } from "@/types/category";
+import type { StoreSettings } from "@/types/settings";
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918796513654";
 const WHATSAPP_GREETING = encodeURIComponent("Hello, I'd like to learn more about AL-HAYAT products.");
@@ -25,9 +26,13 @@ const NAV_LINKS_AFTER = [
 
 interface TopNavBarProps {
   categories?: Category[];
+  settings?: StoreSettings;
 }
 
-export default function TopNavBar({ categories = [] }: TopNavBarProps) {
+export default function TopNavBar({ categories = [], settings }: TopNavBarProps) {
+  const storeName = settings?.store_name || "AL-HAYAT";
+  const whatsappNumber = settings?.whatsapp_number || WHATSAPP_NUMBER;
+  const logoUrl = settings?.logo_url || null;
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -156,13 +161,17 @@ export default function TopNavBar({ categories = [] }: TopNavBarProps) {
               textAlign: "center",
             }}
           >
-            AL-HAYAT
+            {logoUrl ? (
+              <img src={logoUrl} alt={storeName} className="h-8 md:h-10 object-contain max-w-[180px]" />
+            ) : (
+              storeName
+            )}
           </Link>
 
           {/* ─── Right: WhatsApp CTA + Search ─── */}
           <div className="hidden md:flex items-center gap-3 flex-1 justify-end">
             <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_GREETING}`}
+              href={`https://wa.me/${whatsappNumber}?text=${WHATSAPP_GREETING}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-4 py-2 rounded-full text-white transition-all duration-200 hover:scale-105"
@@ -260,7 +269,7 @@ export default function TopNavBar({ categories = [] }: TopNavBarProps) {
               letterSpacing: "-0.02em",
             }}
           >
-            AL-HAYAT
+            {storeName}
           </span>
           <button
             onClick={() => setMobileOpen(false)}
@@ -331,7 +340,7 @@ export default function TopNavBar({ categories = [] }: TopNavBarProps) {
         </nav>
 
         <a
-          href={`https://wa.me/${WHATSAPP_NUMBER}?text=${WHATSAPP_GREETING}`}
+          href={`https://wa.me/${whatsappNumber}?text=${WHATSAPP_GREETING}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-2 mt-8 px-5 py-3 rounded-full text-white"

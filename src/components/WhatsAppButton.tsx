@@ -1,12 +1,17 @@
 "use client";
 
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918796513654";
+const FALLBACK_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918796513654";
 
-export default function WhatsAppButton() {
+interface WhatsAppButtonProps {
+  whatsappNumber?: string;
+}
+
+export default function WhatsAppButton({ whatsappNumber }: WhatsAppButtonProps) {
+  const number = whatsappNumber || FALLBACK_NUMBER;
   const message = encodeURIComponent("Hello! I'd like to order from AL-HAYAT.");
   return (
     <a
-      href={`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`}
+      href={`https://wa.me/${number}?text=${message}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Order on WhatsApp"
