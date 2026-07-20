@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import FeaturedCategoriesSection from "@/components/storefront/categories/FeaturedCategoriesSection";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-const TOTAL_FRAMES = 63;
-const FRAME_PREFIX = "ezgif-frame-";
-const FRAME_EXT = ".png";
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+const SCROLL_DISTANCE = 1575;
 
 const WHATSAPP_NUMBER = "919876543210";
 
@@ -19,22 +23,18 @@ function waLink(product?: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
-function padNumber(n: number, len = 3) {
-  return String(n).padStart(len, "0");
-}
-
 /* ──────────────── Ingredient data ──────────────── */
 const INGREDIENTS = [
-  { name: "Rose", benefit: "Hydrates & Soothes", emoji: "🌹", color: "#fce4ec" },
-  { name: "Beetroot", benefit: "Natural Glow", emoji: "🟣", color: "#fce4ec" },
-  { name: "Lemon", benefit: "Brightens & Refreshes", emoji: "🍋", color: "#fffde7" },
-  { name: "Rice", benefit: "Brightens Skin", emoji: "🌾", color: "#f9fbe7" },
-  { name: "Hibiscus", benefit: "Hair Care & Growth", emoji: "🌺", color: "#fce4ec" },
-  { name: "Neem", benefit: "Purifies & Clarifies", emoji: "🌿", color: "#e8f5e9" },
-  { name: "Coconut", benefit: "Deep Nourishment", emoji: "🥥", color: "#f9fbe7" },
-  { name: "Mint", benefit: "Cooling Effect", emoji: "🌱", color: "#e8f5e9" },
-  { name: "Watermelon", benefit: "Intense Hydration", emoji: "🍉", color: "#fce4ec" },
-  { name: "Strawberry", benefit: "Rich in Antioxidants", emoji: "🍓", color: "#fce4ec" },
+  { name: "Rose", benefit: "Hydrates & Soothes", image: "/bgremoved_photos/rose.png", color: "#fce4ec" },
+  { name: "Beetroot", benefit: "Natural Glow", image: "/bgremoved_photos/beetroot.png", color: "#fce4ec" },
+  { name: "Lemon", benefit: "Brightens & Refreshes", image: "/bgremoved_photos/lemon.png", color: "#fffde7" },
+  { name: "Rice", benefit: "Brightens Skin", image: "/bgremoved_photos/rice.png", color: "#f9fbe7" },
+  { name: "Hibiscus", benefit: "Hair Care & Growth", image: "/bgremoved_photos/hibiscus.png", color: "#fce4ec" },
+  { name: "Neem", benefit: "Purifies & Clarifies", image: "/bgremoved_photos/neem.png", color: "#e8f5e9" },
+  { name: "Coconut", benefit: "Deep Nourishment", image: "/bgremoved_photos/coconut.png", color: "#f9fbe7" },
+  { name: "Mint", benefit: "Cooling Effect", image: "/bgremoved_photos/mint.png", color: "#e8f5e9" },
+  { name: "Watermelon", benefit: "Intense Hydration", image: "/bgremoved_photos/watermelon.png", color: "#fce4ec" },
+  { name: "Strawberry", benefit: "Rich in Antioxidants", image: "/bgremoved_photos/strawberry.png", color: "#fce4ec" },
 ];
 
 /* ──────────────── Testimonials ──────────────── */
@@ -154,13 +154,14 @@ function FAQItem({ q, a }: { q: string; a: string }) {
    MAIN HOMEPAGE COMPONENT
 ═══════════════════════════════════════════════════ */
 export default function Home() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imagesRef = useRef<HTMLImageElement[]>([]);
-  const [loadedCount, setLoadedCount] = useState(0);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const currentFrameRef = useRef(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const progressFillRef = useRef<HTMLDivElement>(null);
   const scrollHintRef = useRef<HTMLDivElement>(null);
+
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [loaderProgress, setLoaderProgress] = useState(0);
+  const [reducedMotion, setReducedMotion] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [productsList, setProductsList] = useState(PRODUCTS);
   const addItem = useCartStore((state) => state.addItem);
@@ -173,12 +174,25 @@ export default function Home() {
   useEffect(() => {
     const introPlayed = sessionStorage.getItem("alhayat-intro-played");
     if (!introPlayed) {
-      setIntroPlaying(true);
-      document.body.classList.add("intro-active");
+      setTimeout(() => {
+        setIntroPlaying(true);
+        document.body.classList.add("intro-active");
+      }, 0);
     }
     return () => {
       document.body.classList.remove("intro-active");
     };
+  }, []);
+
+  // Check reduced motion preference
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setTimeout(() => {
+      setReducedMotion(mediaQuery.matches);
+    }, 0);
+    const listener = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mediaQuery.addEventListener("change", listener);
+    return () => mediaQuery.removeEventListener("change", listener);
   }, []);
 
   // Load products from Supabase dynamically on mount
@@ -192,54 +206,12 @@ export default function Home() {
     });
   }, []);
 
-  // Height per frame in pixels — animation occupies 100vh of scrolling space
-  const pixelsPerFrame = 25;
-  const scrollDistance = TOTAL_FRAMES * pixelsPerFrame; // 1250px of scroll space
-
   // Auto-rotate testimonials
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveTestimonial((v) => (v + 1) % TESTIMONIALS.length);
     }, 4500);
     return () => clearInterval(interval);
-  }, []);
-
-  // Load and decode all frames for hardware-accelerated, stutter-free rendering
-  useEffect(() => {
-    let loaded = 0;
-    const images: HTMLImageElement[] = [];
-
-    const handleFrameLoaded = () => {
-      loaded++;
-      setLoadedCount(loaded);
-      if (loaded === TOTAL_FRAMES) {
-        setIsLoaded(true);
-      }
-    };
-
-    for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const img = new Image();
-      img.src = `/${FRAME_PREFIX}${padNumber(i + 1)}${FRAME_EXT}`;
-
-      img.onload = () => {
-        if (typeof img.decode === "function") {
-          img.decode()
-            .then(handleFrameLoaded)
-            .catch(() => {
-              // Fallback to normal loading if decode fails
-              handleFrameLoaded();
-            });
-        } else {
-          handleFrameLoaded();
-        }
-      };
-
-      img.onerror = handleFrameLoaded;
-
-      images[i] = img;
-    }
-
-    imagesRef.current = images;
   }, []);
 
   // Lock scroll position at scrollY = 0 during intro animation
@@ -259,9 +231,6 @@ export default function Home() {
   // Manage intro animation sequence
   useEffect(() => {
     if (isLoaded && introPlaying) {
-      // Force frame 0 to be drawn (the background of hero)
-      drawFrame(0);
-
       // Start fade-in transition
       const fadeInTimer = setTimeout(() => {
         setLogoState("fade-in");
@@ -294,102 +263,140 @@ export default function Home() {
     }
   }, [isLoaded, introPlaying]);
 
-  // Handle canvas drawing (stabilized with useCallback to prevent re-creation)
-  const drawFrame = useCallback((index: number) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
-
-    let img = imagesRef.current[index];
-    if (!img || !img.complete || img.naturalWidth === 0) {
-      for (let i = index; i >= 0; i--) {
-        if (imagesRef.current[i] && imagesRef.current[i].complete && imagesRef.current[i].naturalWidth > 0) {
-          img = imagesRef.current[i];
-          break;
-        }
+  // Simulated loader progress increment on mount
+  useEffect(() => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.random() * 15;
+      if (progress >= 90) {
+        progress = 90;
+        clearInterval(interval);
       }
-    }
-    if (!img || !img.complete || img.naturalWidth === 0) return;
+      setLoaderProgress(Math.floor(progress));
+    }, 100);
 
-    const cw = window.innerWidth;
-    const ch = window.innerHeight;
-    const iw = img.naturalWidth;
-    // Crop 5% from the bottom to hide the KlingAi watermark
-    const cropBottom = 0.05;
-    const ih = img.naturalHeight * (1 - cropBottom);
-
-    const scale = Math.max(cw / iw, ch / ih);
-    const dw = iw * scale;
-    const dh = ih * scale;
-    const dx = (cw - dw) / 2;
-    const dy = (ch - dh) / 2;
-
-    ctx.clearRect(0, 0, cw, ch);
-    ctx.drawImage(
-      img,
-      0,
-      0,
-      img.naturalWidth,
-      img.naturalHeight * (1 - cropBottom),
-      dx,
-      dy,
-      dw,
-      dh
-    );
+    return () => clearInterval(interval);
   }, []);
 
-  // Resize handler (remains registered without event listener churn)
-  useEffect(() => {
-    const resizeCanvas = () => {
-      const canvas = canvasRef.current;
-      const ctx = canvas?.getContext("2d");
-      if (!canvas || !ctx) return;
+  // Handle video ready callback to complete loader
+  const handleVideoReady = () => {
+    setLoaderProgress(100);
+    setTimeout(() => {
+      setIsLoaded(true);
+    }, 300);
+  };
 
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = window.innerWidth + "px";
-      canvas.style.height = window.innerHeight + "px";
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      drawFrame(currentFrameRef.current);
+  // Video load event bindings to handle readyState correctly (browser caching helper)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const checkReady = () => {
+      if (video.readyState >= 2) {
+        handleVideoReady();
+        return true;
+      }
+      return false;
     };
 
-    window.addEventListener("resize", resizeCanvas);
-    if (isLoaded) {
-      resizeCanvas();
+    if (!checkReady()) {
+      const onCanPlay = () => {
+        handleVideoReady();
+        video.removeEventListener("canplay", onCanPlay);
+      };
+      video.addEventListener("canplay", onCanPlay);
+      return () => {
+        video.removeEventListener("canplay", onCanPlay);
+      };
     }
+  }, []);
 
-    return () => window.removeEventListener("resize", resizeCanvas);
-  }, [isLoaded, drawFrame]);
-
-  // Scroll handler — animation scrubs over scrollDistance pixels, then site content appears
-  // Optimized: Zero React re-renders during scrolling (uses refs and direct DOM manipulation)
+  // Initialize GSAP ScrollTrigger
   useEffect(() => {
     if (!isLoaded || introPlaying) return;
 
-    let ticking = false;
-    const onScroll = () => {
-      const scrollTop = window.scrollY;
-      const maxScroll = scrollDistance;
+    const video = videoRef.current;
+    const container = containerRef.current;
+    if (!video || !container) return;
 
-      const fraction = Math.min(Math.max(scrollTop / maxScroll, 0), 1);
-
-      const frameIndex = Math.min(
-        Math.floor(fraction * TOTAL_FRAMES),
-        TOTAL_FRAMES - 1
-      );
-
-      if (frameIndex !== currentFrameRef.current) {
-        currentFrameRef.current = frameIndex;
-        drawFrame(frameIndex);
+    // Reduced motion accessibility fallback: Skip ScrollTrigger scrub/pin and show last frame
+    if (reducedMotion) {
+      const setLastFrame = () => {
+        if (!isNaN(video.duration) && video.duration > 0) {
+          video.currentTime = video.duration;
+        }
+      };
+      if (video.readyState >= 1) {
+        setLastFrame();
+      } else {
+        video.addEventListener("loadedmetadata", setLastFrame);
+        return () => video.removeEventListener("loadedmetadata", setLastFrame);
       }
+      return;
+    }
 
-      if (progressFillRef.current) {
-        progressFillRef.current.style.width = `${fraction * 100}%`;
+    const ctx = gsap.context(() => {
+      const initScrollTrigger = () => {
+        const duration = video.duration;
+        if (isNaN(duration) || duration === 0) return;
+
+        // Force currentTime to be 0 at start
+        video.currentTime = 0;
+
+        const proxy = { currentTime: 0 };
+
+        gsap.to(proxy, {
+          currentTime: duration,
+          ease: "none",
+          scrollTrigger: {
+            trigger: container,
+            start: "top top",
+            end: () => `+=${SCROLL_DISTANCE}`,
+            pin: true,
+            scrub: 0.5,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              video.currentTime = proxy.currentTime;
+
+              if (progressFillRef.current) {
+                progressFillRef.current.style.width = `${self.progress * 100}%`;
+              }
+
+              if (scrollHintRef.current) {
+                if (self.scroll() > 100) {
+                  scrollHintRef.current.style.opacity = "0";
+                  scrollHintRef.current.style.transform = "translate(-50%, 20px)";
+                  scrollHintRef.current.style.pointerEvents = "none";
+                } else {
+                  scrollHintRef.current.style.opacity = "1";
+                  scrollHintRef.current.style.transform = "translate(-50%, 0)";
+                  scrollHintRef.current.style.pointerEvents = "auto";
+                }
+              }
+            },
+          },
+        });
+      };
+
+      if (video.readyState >= 1) {
+        initScrollTrigger();
+      } else {
+        video.addEventListener("loadedmetadata", initScrollTrigger);
       }
+    }, container);
 
+    return () => {
+      ctx.revert();
+    };
+  }, [isLoaded, introPlaying, reducedMotion]);
+
+  // Fallback scroll listener for scroll hint when reduced motion is active
+  useEffect(() => {
+    if (!reducedMotion || !isLoaded || introPlaying) return;
+
+    const handleScroll = () => {
       if (scrollHintRef.current) {
-        if (scrollTop > 100) {
+        if (window.scrollY > 100) {
           scrollHintRef.current.style.opacity = "0";
           scrollHintRef.current.style.transform = "translate(-50%, 20px)";
           scrollHintRef.current.style.pointerEvents = "none";
@@ -401,25 +408,12 @@ export default function Home() {
       }
     };
 
-    const onScrollThrottled = () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(() => {
-          onScroll();
-          ticking = false;
-        });
-      }
-    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [reducedMotion, isLoaded, introPlaying]);
 
-    window.addEventListener("scroll", onScrollThrottled, { passive: true });
-    onScroll();
-
-    return () => window.removeEventListener("scroll", onScrollThrottled);
-  }, [isLoaded, introPlaying, drawFrame]);
-
-  const loadingPercentage = TOTAL_FRAMES > 0 ? loadedCount / TOTAL_FRAMES : 0;
   const circumference = 2 * Math.PI * 45;
-  const strokeDashoffset = circumference * (1 - loadingPercentage);
+  const strokeDashoffset = circumference * (1 - loaderProgress / 100);
 
   return (
     <main>
@@ -436,7 +430,7 @@ export default function Home() {
               <circle cx="50" cy="50" r="45" className="loader-progress" style={{ strokeDashoffset }} />
             </svg>
             <span className="absolute inset-0 flex items-center justify-center text-[22px] font-semibold tracking-tight text-[#e0e0e0]">
-              {Math.round(loadingPercentage * 100)}%
+              {loaderProgress}%
             </span>
           </div>
           <p className="text-[14px] font-normal text-white/40 tracking-[2px] uppercase">Loading…</p>
@@ -446,8 +440,9 @@ export default function Home() {
       {/* ── Scroll Hint ── */}
       <div
         ref={scrollHintRef}
-        className={`fixed bottom-12 left-1/2 -translate-x-1/2 z-[90] transition-all duration-500 ${isLoaded && !introPlaying ? "opacity-100" : "opacity-0 translate-y-5 pointer-events-none"
+        className={`fixed bottom-12 left-1/2 z-[90] transition-all duration-500 ${isLoaded && !introPlaying ? "opacity-100" : "opacity-0 translate-y-5 pointer-events-none"
           }`}
+        style={{ transform: "translate(-50%, 0)" }}
       >
         <div className="flex flex-col items-center gap-3">
           <div className="scroll-mouse">
@@ -459,7 +454,7 @@ export default function Home() {
 
       {/* ── Progress Bar ── */}
       <div
-        className={`fixed bottom-0 left-0 w-full h-[3px] z-[90] bg-white/5 transition-opacity duration-500 ${isLoaded && !introPlaying ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`fixed bottom-0 left-0 w-full h-[3px] z-[90] bg-white/5 transition-opacity duration-500 ${isLoaded && !introPlaying && !reducedMotion ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
       >
         <div
@@ -496,11 +491,18 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── Canvas (fixed, behind content) ── */}
-      <canvas ref={canvasRef} className="fixed top-0 left-0 w-screen h-screen z-10" />
-
-      {/* ── Scroll spacer: gives the animation room to scrub ── */}
-      <div style={{ height: `calc(100vh + ${scrollDistance}px)` }} aria-hidden="true" />
+      {/* ── Hero Video Section ── */}
+      <div ref={containerRef} className="video-container-cropped z-10">
+        <video
+          ref={videoRef}
+          id="hero-video"
+          muted
+          playsInline
+          preload="metadata"
+          src="/hero_video.mp4"
+          className="video-element-cropped"
+        />
+      </div>
 
       {/* ═══════════════════════════════════════════════════════
           MAIN WEBSITE CONTENT — starts directly after animation
@@ -575,7 +577,7 @@ export default function Home() {
               <span
                 style={{ fontFamily: "'Dancing Script', cursive", fontSize: "20px", color: "#b22a2b", display: "block", marginBottom: "8px" }}
               >
-                From Nature's Heart
+                From Nature&apos;s Heart
               </span>
               <h2
                 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(26px,3.5vw,40px)", fontWeight: 600, color: "#434b01", marginBottom: "12px" }}
@@ -596,10 +598,14 @@ export default function Home() {
                   style={{ background: "rgba(255,248,241,0.7)", backdropFilter: "blur(8px)", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
                 >
                   <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mb-3 text-3xl group-hover:scale-110 transition-transform duration-300"
+                    className="w-16 h-16 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 overflow-hidden"
                     style={{ background: ing.color }}
                   >
-                    {ing.emoji}
+                    <img
+                      src={ing.image}
+                      alt={ing.name}
+                      className="w-11 h-11 object-contain"
+                    />
                   </div>
                   <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "14px", fontWeight: 600, color: "#434b01", marginBottom: "4px" }}>
                     {ing.name}
@@ -667,10 +673,10 @@ export default function Home() {
               {productsList.slice(0, 6).map((product) => (
                 <div
                   key={product.slug}
-                  className="group bg-white rounded-2xl overflow-hidden hover:-translate-y-1 transition-transform duration-300"
+                  className="group bg-white rounded-2xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between"
                   style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.07)" }}
                 >
-                  <Link href={`/product/${product.slug}`} style={{ textDecoration: "none" }}>
+                  <Link href={`/product/${product.slug}`} style={{ textDecoration: "none" }} className="flex flex-col flex-1">
                     <div className="relative" style={{ aspectRatio: "1 / 1", background: "#faf3ea" }}>
                       {product.badge && (
                         <span
@@ -686,14 +692,14 @@ export default function Home() {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
-                    <div className="p-4 pb-3">
+                    <div className="p-4 pb-3 flex flex-col flex-1">
                       <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "10px", fontWeight: 600, color: "#b22a2b", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>
                         {product.category}
                       </p>
                       <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "16px", fontWeight: 600, color: "#434b01", marginBottom: "4px" }}>
                         {product.name}
                       </h3>
-                      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "12px", color: "#47483a", marginBottom: "10px", lineHeight: 1.5 }}>
+                      <p className="flex-1" style={{ fontFamily: "'Inter', sans-serif", fontSize: "12px", color: "#47483a", marginBottom: "10px", lineHeight: 1.5 }}>
                         {product.desc}
                       </p>
                       <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "16px", fontWeight: 700, color: "#434b01" }}>

@@ -73,7 +73,12 @@ export const useCartStore = create<CartState>()(
       },
 
       updateQuantity: (productId: string, quantity: number) => {
-        if (quantity < 1) return;
+        if (quantity < 1) {
+          set((state) => ({
+            items: state.items.filter((item) => item.productId !== productId),
+          }));
+          return;
+        }
         
         set((state) => ({
           items: state.items.map((item) =>

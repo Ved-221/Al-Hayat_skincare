@@ -17,6 +17,7 @@ const INGREDIENTS = [
     benefit: "Deeply hydrates and soothes irritated skin",
     desc: "Rich in natural oils, rose helps retain moisture in the skin and brings a beautiful dewy glow. Known for its anti-inflammatory properties, it calms redness and restores the skin's natural radiance.",
     emoji: "🌹",
+    image: "/bgremoved_photos/rose.png",
     color: "#fce4ec",
     products: ["Rice Lemon Rose Soap"],
   },
@@ -28,6 +29,7 @@ const INGREDIENTS = [
     benefit: "Natural brightening and pigmentation reduction",
     desc: "Rich in Vitamin C, iron and antioxidants, beetroot combats pigmentation, evens skin tone and provides a natural rosy glow. Its betalain content helps fight free radicals.",
     emoji: "🟣",
+    image: "/bgremoved_photos/beetroot.png",
     color: "#fce4ec",
     products: ["Beetroot & Hibiscus Face Wash", "Beetroot Lip Balm"],
   },
@@ -61,6 +63,7 @@ const INGREDIENTS = [
     benefit: "Vitamin C boost and natural brightening",
     desc: "A natural source of Vitamin C, lemon juice brightens the skin, reduces dark spots and provides antioxidant protection. Formulated at skin-safe concentrations for gentle daily use.",
     emoji: "🍋",
+    image: "/bgremoved_photos/lemon.png",
     color: "#fffde7",
     products: ["Deo Shield Herbal Soap", "Rice Lemon Rose Soap"],
   },
@@ -72,6 +75,7 @@ const INGREDIENTS = [
     benefit: "Deep moisturization and hair strengthening",
     desc: "Cold-pressed coconut oil is packed with lauric acid and fatty acids that penetrate deep into hair and skin. It strengthens hair, prevents breakage, and leaves skin supremely nourished.",
     emoji: "🥥",
+    image: "/bgremoved_photos/coconut.png",
     color: "#f9fbe7",
     products: ["Summer Cooling Hair Oil", "Herbal Hair Oil"],
   },
@@ -83,6 +87,7 @@ const INGREDIENTS = [
     benefit: "Promotes hair growth and reduces hair fall",
     desc: "Rich in amino acids, Vitamin C and flavonoids, hibiscus nourishes hair follicles, stimulates hair growth and adds natural shine. It also acts as a natural conditioner.",
     emoji: "🌺",
+    image: "/bgremoved_photos/hibiscus.png",
     color: "#fce4ec",
     products: ["Beetroot & Hibiscus Face Wash", "Herbal Hair Oil"],
   },
@@ -94,6 +99,7 @@ const INGREDIENTS = [
     benefit: "Skin brightening and anti-aging",
     desc: "Rice water contains inositol which penetrates damaged hair and skin. Rich in ferulic acid and vitamin E, it brightens complexion, tightens pores and reduces signs of aging.",
     emoji: "🌾",
+    image: "/bgremoved_photos/rice.png",
     color: "#f9fbe7",
     products: ["Rice Lemon Rose Soap", "Rice Rose Hip Face Wash"],
   },
@@ -116,6 +122,7 @@ const INGREDIENTS = [
     benefit: "Antibacterial purification and acne control",
     desc: "Known as nature's antibiotic, neem is packed with nimbidin and quercetin that fight acne-causing bacteria, soothe inflammation and help regulate sebum production.",
     emoji: "🌿",
+    image: "/bgremoved_photos/neem.png",
     color: "#e8f5e9",
     products: ["Herbal Neem Soap"],
   },
@@ -127,6 +134,7 @@ const INGREDIENTS = [
     benefit: "Hair strengthening and premature greying prevention",
     desc: "One of the richest natural sources of Vitamin C, amla strengthens hair from roots, prevents premature greying, and adds beautiful shine. Rich in tannins that protect hair from environmental stress.",
     emoji: "🟢",
+    image: "/bgremoved_photos/amla.png",
     color: "#e8f5e9",
     products: ["Herbal Hair Oil"],
   },
@@ -138,6 +146,7 @@ const INGREDIENTS = [
     benefit: "Intense hydration and antioxidant boost",
     desc: "Watermelon extract is rich in lycopene, vitamins A, B6 and C, and amino acids. It provides intense hydration without clogging pores and is perfect for all skin types, including oily skin.",
     emoji: "🍉",
+    image: "/bgremoved_photos/watermelon.png",
     color: "#fce4ec",
     products: ["Watermelon Soap"],
   },
@@ -149,6 +158,7 @@ const INGREDIENTS = [
     benefit: "Rich in antioxidants and natural exfoliation",
     desc: "Strawberries contain salicylic acid which gently exfoliates, fights blackheads and brightens the complexion. Rich in Vitamin C and ellagic acid, they protect skin from UV damage.",
     emoji: "🍓",
+    image: "/bgremoved_photos/strawberry.png",
     color: "#fce4ec",
     products: ["Strawberry Lip Balm"],
   },
@@ -160,6 +170,7 @@ const INGREDIENTS = [
     benefit: "Cooling, refreshing and soothing effect",
     desc: "Menthol from mint provides an instant cooling sensation, relieves skin irritation and reduces redness. Its antimicrobial properties make it effective for oily and acne-prone skin.",
     emoji: "🌱",
+    image: "/bgremoved_photos/mint.png",
     color: "#e8f5e9",
     products: ["Deo Shield Herbal Soap"],
   },
@@ -228,12 +239,20 @@ export default function IngredientsPage() {
               >
                 {/* Color header */}
                 <div
-                  className="flex items-center justify-center"
+                  className="flex items-center justify-center overflow-hidden"
                   style={{ height: "120px", background: ing.color }}
                 >
-                  <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
-                    {ing.emoji}
-                  </span>
+                  {ing.image ? (
+                    <img
+                      src={ing.image}
+                      alt={ing.name}
+                      className="w-24 h-24 object-contain group-hover:scale-110 transition-transform duration-300"
+                    />
+                  ) : (
+                    <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
+                      {ing.emoji}
+                    </span>
+                  )}
                 </div>
 
                 <div className="p-5">

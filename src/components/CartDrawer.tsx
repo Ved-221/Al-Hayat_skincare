@@ -118,7 +118,7 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
               className="block w-full text-center py-4 rounded-lg bg-[#434b01] text-white hover:opacity-90 transition-opacity"
               style={{ fontFamily: "'Inter', sans-serif", fontSize: "14px", fontWeight: 600, letterSpacing: "0.1em" }}
             >
-              VIEW CART & CHECKOUT
+              VIEW CART
             </Link>
           </div>
         )}

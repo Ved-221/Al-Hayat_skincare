@@ -59,13 +59,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body
-        style={{
-          background: "#fff8f1",
-          color: "#1e1b16",
-          overflowX: "hidden",
-        }}
-      >
+      <body>
         {children}
       </body>
     </html>
