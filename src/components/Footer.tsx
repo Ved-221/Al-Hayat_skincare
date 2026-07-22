@@ -157,9 +157,9 @@ export default function Footer({ settings }: { settings?: StoreSettings | null }
             { label: "Shipping Policy", href: "/shipping" },
             { label: "Terms & Conditions", href: "/terms" },
             { label: "Returns Policy", href: "/returns" },
-            { label: "Sourcing Ethics", href: "#" },
+            { label: "Sourcing Ethics", href: "/sourcing-ethics" },
           ].map((l) => (
-            <a
+            <Link
               key={l.label}
               href={l.href}
               className="block hover:text-[#b22a2b] transition-colors hover:translate-x-1 duration-200"
@@ -173,7 +173,7 @@ export default function Footer({ settings }: { settings?: StoreSettings | null }
               }}
             >
               {l.label}
-            </a>
+            </Link>
           ))}
         </div>
 

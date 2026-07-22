@@ -19,24 +19,8 @@ export default function ContactFormClient({ whatsappNumber }: ContactFormClientP
     setSubmitted(true);
   };
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    padding: "12px 16px",
-    borderRadius: "10px",
-    border: "1.5px solid rgba(200,199,181,0.6)",
-    background: "#fff8f1",
-    fontFamily: "'Inter', sans-serif",
-    fontSize: "14px",
-    color: "#434b01",
-    outline: "none",
-  };
-
   return (
-    <div>
-      <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "28px", fontWeight: 600, color: "#434b01", marginBottom: "24px" }}>
-        Send a Message
-      </h2>
-
+    <div className="w-full">
       {submitted ? (
         <div
           className="flex flex-col items-center justify-center text-center p-12 rounded-2xl animate-fadeIn"
@@ -51,13 +35,11 @@ export default function ContactFormClient({ whatsappNumber }: ContactFormClientP
           </p>
         </div>
       ) : (
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4"
-        >
-          <div>
-            <label style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600, color: "#787868", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>
-              Name *
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full">
+          {/* Full Name */}
+          <div className="flex flex-col w-full">
+            <label style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600, color: "#787868", letterSpacing: "0.08em", textTransform: "uppercase", display: "block" }}>
+              Full name *
             </label>
             <input
               type="text"
@@ -66,14 +48,17 @@ export default function ContactFormClient({ whatsappNumber }: ContactFormClientP
               onChange={handleChange}
               required
               placeholder="Your full name"
-              style={inputStyle}
+              className="w-full py-2.5 bg-transparent border-b border-[#c8c7b5]/80 focus:border-[#434b01] outline-none transition-colors text-[15px] font-medium text-[#434b01] placeholder-[#c8c7b5]/60 rounded-none"
+              style={{ fontFamily: "'Inter', sans-serif" }}
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600, color: "#787868", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>
-                Email *
+          {/* Grid for Email & Phone */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full">
+            {/* Email Address */}
+            <div className="flex flex-col">
+              <label style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600, color: "#787868", letterSpacing: "0.08em", textTransform: "uppercase", display: "block" }}>
+                Email address *
               </label>
               <input
                 type="email"
@@ -82,12 +67,14 @@ export default function ContactFormClient({ whatsappNumber }: ContactFormClientP
                 onChange={handleChange}
                 required
                 placeholder="your@email.com"
-                style={inputStyle}
+                className="w-full py-2.5 bg-transparent border-b border-[#c8c7b5]/80 focus:border-[#434b01] outline-none transition-colors text-[15px] font-medium text-[#434b01] placeholder-[#c8c7b5]/60 rounded-none"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               />
             </div>
-            <div>
-              <label style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600, color: "#787868", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>
-                Phone
+            {/* Phone Number */}
+            <div className="flex flex-col">
+              <label style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600, color: "#787868", letterSpacing: "0.08em", textTransform: "uppercase", display: "block" }}>
+                Phone number
               </label>
               <input
                 type="tel"
@@ -95,29 +82,33 @@ export default function ContactFormClient({ whatsappNumber }: ContactFormClientP
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="+91 XXXXX XXXXX"
-                style={inputStyle}
+                className="w-full py-2.5 bg-transparent border-b border-[#c8c7b5]/80 focus:border-[#434b01] outline-none transition-colors text-[15px] font-medium text-[#434b01] placeholder-[#c8c7b5]/60 rounded-none"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               />
             </div>
           </div>
 
-          <div>
-            <label style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600, color: "#787868", letterSpacing: "0.08em", textTransform: "uppercase", display: "block", marginBottom: "6px" }}>
-              Message *
+          {/* Messages */}
+          <div className="flex flex-col w-full">
+            <label style={{ fontFamily: "'Inter', sans-serif", fontSize: "11px", fontWeight: 600, color: "#787868", letterSpacing: "0.08em", textTransform: "uppercase", display: "block" }}>
+              Messages *
             </label>
             <textarea
               name="message"
               value={form.message}
               onChange={handleChange}
               required
-              rows={5}
+              rows={4}
               placeholder="Tell us how we can help you..."
-              style={{ ...inputStyle, resize: "vertical" }}
+              className="w-full py-2.5 bg-transparent border-b border-[#c8c7b5]/80 focus:border-[#434b01] outline-none transition-colors text-[15px] font-medium text-[#434b01] placeholder-[#c8c7b5]/60 rounded-none resize-none"
+              style={{ fontFamily: "'Inter', sans-serif" }}
             />
           </div>
 
+          {/* Submit Button (Pill-shaped, left aligned) */}
           <button
             type="submit"
-            className="w-full py-4 rounded-xl text-white hover:opacity-90 transition-opacity shadow-xs hover:shadow-md"
+            className="px-10 py-3.5 rounded-full text-white hover:opacity-95 transition-opacity shadow-sm hover:shadow-md w-fit cursor-pointer border-none"
             style={{
               background: "#434b01",
               fontFamily: "'Inter', sans-serif",
@@ -125,19 +116,16 @@ export default function ContactFormClient({ whatsappNumber }: ContactFormClientP
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              border: "none",
-              cursor: "pointer",
-              marginTop: "4px",
             }}
           >
-            Send Message
+            Submit
           </button>
         </form>
       )}
 
       {/* Quick WhatsApp CTA */}
-      <div className="mt-6 text-center">
-        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "13px", color: "#787868", marginBottom: "10px" }}>
+      <div className="mt-8 pt-6 border-t border-[#c8c7b5]/30">
+        <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "13px", color: "#787868", marginBottom: "12px" }}>
           Prefer instant support?
         </p>
         <a

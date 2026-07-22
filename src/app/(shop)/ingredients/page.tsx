@@ -187,6 +187,13 @@ const INGREDIENTS = [
   },
 ];
 
+const getProductSlug = (name: string) => {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+};
+
 export default function IngredientsPage() {
   return (
     <main className="min-h-screen pt-[72px]" style={{ background: "#fff8f1" }}>
@@ -285,15 +292,16 @@ export default function IngredientsPage() {
                       <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "9px", fontWeight: 700, color: "#787868", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "6px" }}>
                         Found In:
                       </p>
-                      <div className="flex flex-wrap gap-1.5">
+                      <div className="flex overflow-x-auto gap-2 no-scrollbar pb-1 flex-nowrap w-full">
                         {ing.products.map((p) => (
-                          <span
+                          <Link
                             key={p}
-                            className="px-2 py-1 rounded-md"
-                            style={{ fontFamily: "'Inter', sans-serif", fontSize: "10px", color: "#434b01", background: "#EAE2D1" }}
+                            href={`/product/${getProductSlug(p)}`}
+                            className="px-2.5 py-1.5 rounded-lg border border-[#c8c7b5]/30 hover:bg-[#434b01] hover:text-[#fff8f1] transition-all whitespace-nowrap text-[10px] font-medium flex-shrink-0"
+                            style={{ fontFamily: "'Inter', sans-serif", color: "#434b01", background: "#fff8f1", textDecoration: "none" }}
                           >
                             {p}
-                          </span>
+                          </Link>
                         ))}
                       </div>
                     </div>

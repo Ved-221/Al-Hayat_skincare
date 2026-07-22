@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import CartDrawer from "./CartDrawer";
 import { useCartStore } from "@/store/cartStore";
+import { useWishlistStore } from "@/store/wishlistStore";
 import CategoryNavigation from "@/components/storefront/categories/CategoryNavigation";
 import type { Category } from "@/types/category";
 import type { StoreSettings } from "@/types/settings";
@@ -38,6 +39,7 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
   const [cartOpen, setCartOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(pathname !== "/");
   const { getTotalItems } = useCartStore();
+  const { items: wishlistItems } = useWishlistStore();
   const [mounted, setMounted] = useState(false);
   
   useEffect(() => {
@@ -70,11 +72,11 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
           transform: isVisible ? "translateY(0)" : "translateY(-100%)",
           opacity: isVisible ? 1 : 0,
           pointerEvents: isVisible ? "auto" : "none",
-          background: "linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 248, 241, 0.15) 100%)",
-          backdropFilter: "blur(20px) saturate(160%)",
-          WebkitBackdropFilter: "blur(20px) saturate(160%)",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.45)",
-          boxShadow: "0 8px 32px 0 rgba(67, 75, 1, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.6)",
+          background: "rgba(255, 255, 255, 0.65)",
+          backdropFilter: "blur(24px) saturate(190%)",
+          WebkitBackdropFilter: "blur(24px) saturate(190%)",
+          borderBottom: "1px solid rgba(200, 199, 181, 0.18)",
+          boxShadow: "0 1px 0 0 rgba(0, 0, 0, 0.02), 0 4px 20px rgba(0, 0, 0, 0.02), inset 0 1px 0 0 rgba(255, 255, 255, 0.5)",
         }}
       >
         <div
@@ -190,6 +192,22 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
               </svg>
               Order on WhatsApp
             </a>
+
+            {/* Wishlist Link */}
+            <Link
+              href="/wishlist"
+              className="relative p-2 text-[#434b01] hover:text-[#b22a2b] transition-colors"
+              aria-label="Wishlist"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "24px" }}>favorite</span>
+              {mounted && wishlistItems.length > 0 && (
+                <span 
+                  className="absolute top-0 right-0 w-4 h-4 bg-[#b22a2b] text-white text-[10px] font-bold flex items-center justify-center rounded-full"
+                >
+                  {wishlistItems.length}
+                </span>
+              )}
+            </Link>
             
             <button
               onClick={() => setCartOpen(true)}
@@ -209,6 +227,22 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
 
           {/* Mobile right side — WhatsApp icon & Cart */}
           <div className="md:hidden flex items-center gap-2 flex-1 justify-end">
+            {/* Wishlist Link */}
+            <Link
+              href="/wishlist"
+              className="relative p-2 text-[#434b01] transition-colors"
+              aria-label="Wishlist"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "24px" }}>favorite</span>
+              {mounted && wishlistItems.length > 0 && (
+                <span 
+                  className="absolute top-0 right-0 w-4 h-4 bg-[#b22a2b] text-white text-[10px] font-bold flex items-center justify-center rounded-full"
+                >
+                  {wishlistItems.length}
+                </span>
+              )}
+            </Link>
+
             <button
               onClick={() => setCartOpen(true)}
               className="relative p-2 text-[#434b01] transition-colors"
@@ -337,6 +371,31 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
               </Link>
             );
           })}
+          {/* Mobile Wishlist Link */}
+          <Link
+            href="/wishlist"
+            onClick={() => setMobileOpen(false)}
+            style={{
+              fontFamily: "'Playfair Display', serif",
+              fontSize: "22px",
+              fontWeight: pathname === "/wishlist" ? 700 : 400,
+              color: pathname === "/wishlist" ? "#b22a2b" : "#434b01",
+              textDecoration: "none",
+              padding: "10px 0",
+              borderBottom: "1px solid rgba(200,199,181,0.35)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              transition: "color 0.2s",
+            }}
+          >
+            <span>Wishlist</span>
+            {mounted && wishlistItems.length > 0 && (
+              <span className="w-5 h-5 bg-[#b22a2b] text-white text-[11px] font-bold flex items-center justify-center rounded-full">
+                {wishlistItems.length}
+              </span>
+            )}
+          </Link>
         </nav>
 
         <a

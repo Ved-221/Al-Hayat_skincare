@@ -5,6 +5,8 @@ import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import FeaturedCategoriesSection from "@/components/storefront/categories/FeaturedCategoriesSection";
+import { ExpandingCards, CardItem } from "@/components/ExpandingCards";
+import InfiniteProductSlider from "@/components/InfiniteProductSlider";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -25,16 +27,86 @@ function waLink(product?: string) {
 
 /* ──────────────── Ingredient data ──────────────── */
 const INGREDIENTS = [
-  { name: "Rose", benefit: "Hydrates & Soothes", image: "/bgremoved_photos/rose.png", color: "#fce4ec" },
-  { name: "Beetroot", benefit: "Natural Glow", image: "/bgremoved_photos/beetroot.png", color: "#fce4ec" },
-  { name: "Lemon", benefit: "Brightens & Refreshes", image: "/bgremoved_photos/lemon.png", color: "#fffde7" },
-  { name: "Rice", benefit: "Brightens Skin", image: "/bgremoved_photos/rice.png", color: "#f9fbe7" },
-  { name: "Hibiscus", benefit: "Hair Care & Growth", image: "/bgremoved_photos/hibiscus.png", color: "#fce4ec" },
-  { name: "Neem", benefit: "Purifies & Clarifies", image: "/bgremoved_photos/neem.png", color: "#e8f5e9" },
-  { name: "Coconut", benefit: "Deep Nourishment", image: "/bgremoved_photos/coconut.png", color: "#f9fbe7" },
-  { name: "Mint", benefit: "Cooling Effect", image: "/bgremoved_photos/mint.png", color: "#e8f5e9" },
-  { name: "Watermelon", benefit: "Intense Hydration", image: "/bgremoved_photos/watermelon.png", color: "#fce4ec" },
-  { name: "Strawberry", benefit: "Rich in Antioxidants", image: "/bgremoved_photos/strawberry.png", color: "#fce4ec" },
+  {
+    name: "Rose",
+    benefit: "Hydrates & Soothes",
+    image: "/bgremoved_photos/rose.png",
+    color: "#fce4ec",
+    emoji: "🌹",
+    desc: "Rich in natural oils, rose helps retain moisture in the skin and brings a beautiful dewy glow. Known for its anti-inflammatory properties, it calms redness and restores the skin's natural radiance."
+  },
+  {
+    name: "Beetroot",
+    benefit: "Natural Glow",
+    image: "/bgremoved_photos/beetroot.png",
+    color: "#fce4ec",
+    emoji: "🟣",
+    desc: "Rich in Vitamin C, iron and antioxidants, beetroot combats pigmentation, evens skin tone and provides a natural rosy glow. Its betalain content helps fight free radicals."
+  },
+  {
+    name: "Lemon",
+    benefit: "Brightens & Refreshes",
+    image: "/bgremoved_photos/lemon.png",
+    color: "#fffde7",
+    emoji: "🍋",
+    desc: "A natural source of Vitamin C, lemon juice brightens the skin, reduces dark spots and provides antioxidant protection. Formulated at skin-safe concentrations for gentle daily use."
+  },
+  {
+    name: "Rice",
+    benefit: "Brightens Skin",
+    image: "/bgremoved_photos/rice.png",
+    color: "#f9fbe7",
+    emoji: "🌾",
+    desc: "Rice water contains inositol which penetrates damaged hair and skin. Rich in ferulic acid and vitamin E, it brightens complexion, tightens pores and reduces signs of aging."
+  },
+  {
+    name: "Hibiscus",
+    benefit: "Hair Care & Growth",
+    image: "/bgremoved_photos/hibiscus.png",
+    color: "#fce4ec",
+    emoji: "🌺",
+    desc: "Rich in amino acids, Vitamin C and flavonoids, hibiscus nourishes hair follicles, stimulates hair growth and adds natural shine. It also acts as a natural conditioner."
+  },
+  {
+    name: "Neem",
+    benefit: "Purifies & Clarifies",
+    image: "/bgremoved_photos/neem.png",
+    color: "#e8f5e9",
+    emoji: "🌿",
+    desc: "Known as nature's antibiotic, neem is packed with nimbidin and quercetin that fight acne-causing bacteria, soothe inflammation and help regulate sebum production."
+  },
+  {
+    name: "Coconut",
+    benefit: "Deep Nourishment",
+    image: "/bgremoved_photos/coconut.png",
+    color: "#f9fbe7",
+    emoji: "🥥",
+    desc: "Cold-pressed coconut oil is packed with lauric acid and fatty acids that penetrate deep into hair and skin. It strengthens hair, prevents breakage, and leaves skin supremely nourished."
+  },
+  {
+    name: "Mint",
+    benefit: "Cooling Effect",
+    image: "/bgremoved_photos/mint.png",
+    color: "#e8f5e9",
+    emoji: "🌱",
+    desc: "Menthol from mint provides an instant cooling sensation, relieves skin irritation and reduces redness. Its antimicrobial properties make it effective for oily and acne-prone skin."
+  },
+  {
+    name: "Watermelon",
+    benefit: "Intense Hydration",
+    image: "/bgremoved_photos/watermelon.png",
+    color: "#fce4ec",
+    emoji: "🍉",
+    desc: "Watermelon extract is rich in lycopene, vitamins A, B6 and C, and amino acids. It provides intense hydration without clogging pores and is perfect for all skin types, including oily skin."
+  },
+  {
+    name: "Strawberry",
+    benefit: "Rich in Antioxidants",
+    image: "/bgremoved_photos/strawberry.png",
+    color: "#fce4ec",
+    emoji: "🍓",
+    desc: "Strawberries contain salicylic acid which gently exfoliates, fights blackheads and brightens the complexion. Rich in Vitamin C and ellagic acid, they protect skin from UV damage."
+  }
 ];
 
 /* ──────────────── Testimonials ──────────────── */
@@ -589,33 +661,19 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Ingredient grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-              {INGREDIENTS.map((ing) => (
-                <div
-                  key={ing.name}
-                  className="group flex flex-col items-center text-center p-4 rounded-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer"
-                  style={{ background: "rgba(255,248,241,0.7)", backdropFilter: "blur(8px)", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
-                >
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 overflow-hidden"
-                    style={{ background: ing.color }}
-                  >
-                    <img
-                      src={ing.image}
-                      alt={ing.name}
-                      className="w-11 h-11 object-contain"
-                    />
-                  </div>
-                  <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "14px", fontWeight: 600, color: "#434b01", marginBottom: "4px" }}>
-                    {ing.name}
-                  </h3>
-                  <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "10px", color: "#b22a2b", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                    {ing.benefit}
-                  </p>
-                </div>
-              ))}
-            </div>
+            {/* Ingredient Expanding Cards */}
+            <ExpandingCards
+              className="mx-auto mt-8"
+              items={INGREDIENTS.map((ing, index) => ({
+                id: index,
+                title: ing.name,
+                description: ing.desc,
+                imgSrc: ing.image,
+                emoji: ing.emoji,
+                benefit: ing.benefit,
+                color: ing.color
+              }))}
+            />
 
             <div className="text-center mt-10">
               <Link
@@ -649,9 +707,9 @@ export default function Home() {
         </div>
 
         {/* ══ SECTION 4: Best Sellers / Featured Products ══ */}
-        <section style={{ background: "#EAE2D1" }} className="py-20 px-6">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12">
+        <section style={{ background: "#EAE2D1" }} className="py-20 px-6 overflow-hidden">
+          <div className="max-w-5xl mx-auto mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <span style={{ fontFamily: "'Dancing Script', cursive", fontSize: "20px", color: "#b22a2b", display: "block", marginBottom: "6px" }}>
                   Bestsellers
@@ -668,71 +726,10 @@ export default function Home() {
                 VIEW ALL PRODUCTS →
               </Link>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {productsList.slice(0, 6).map((product) => (
-                <div
-                  key={product.slug}
-                  className="group bg-white rounded-2xl overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col justify-between"
-                  style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.07)" }}
-                >
-                  <Link href={`/product/${product.slug}`} style={{ textDecoration: "none" }} className="flex flex-col flex-1">
-                    <div className="relative" style={{ aspectRatio: "1 / 1", background: "#faf3ea" }}>
-                      {product.badge && (
-                        <span
-                          className="absolute top-3 left-3 z-10 text-white px-2.5 py-1 rounded-sm"
-                          style={{ fontFamily: "'Inter',sans-serif", fontSize: "9px", fontWeight: 700, letterSpacing: "0.1em", background: "#b22a2b" }}
-                        >
-                          {product.badge}
-                        </span>
-                      )}
-                      <img
-                        src={product.img}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
-                    <div className="p-4 pb-3 flex flex-col flex-1">
-                      <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "10px", fontWeight: 600, color: "#b22a2b", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>
-                        {product.category}
-                      </p>
-                      <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "16px", fontWeight: 600, color: "#434b01", marginBottom: "4px" }}>
-                        {product.name}
-                      </h3>
-                      <p className="flex-1" style={{ fontFamily: "'Inter', sans-serif", fontSize: "12px", color: "#47483a", marginBottom: "10px", lineHeight: 1.5 }}>
-                        {product.desc}
-                      </p>
-                      <span style={{ fontFamily: "'Inter', sans-serif", fontSize: "16px", fontWeight: 700, color: "#434b01" }}>
-                        {product.price}
-                      </span>
-                    </div>
-                  </Link>
-                  <div className="px-4 pb-4">
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        addItem(product, 1);
-                        alert("Added to cart!");
-                      }}
-                      className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-white hover:opacity-90 transition-opacity"
-                      style={{
-                        background: "#434b01",
-                        fontFamily: "'Inter', sans-serif",
-                        fontSize: "11px",
-                        fontWeight: 600,
-                        letterSpacing: "0.06em",
-                        border: "none",
-                        cursor: "pointer",
-                      }}
-                    >
-                      <span className="material-symbols-outlined" style={{ fontSize: "14px" }}>shopping_cart</span>
-                      ADD TO CART
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="w-full">
+            <InfiniteProductSlider productsList={productsList} addItem={addItem} />
           </div>
         </section>
 

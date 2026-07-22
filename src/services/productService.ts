@@ -16,7 +16,7 @@ export function mapDbProduct(dbProduct: any): Product {
     badge: dbProduct.badge || null,
     ingredients: dbProduct.ingredients || [],
     benefit: dbProduct.benefit || "",
-    img: dbProduct.img || "",
+    img: dbProduct.img ? `${dbProduct.img}?v=2` : "",
     slug: dbProduct.slug || "",
     suitableFor: dbProduct.suitable_for || dbProduct.suitableFor || "",
     tagline: dbProduct.tagline || "",

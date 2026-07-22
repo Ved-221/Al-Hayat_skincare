@@ -57,7 +57,7 @@ export const DEFAULT_STORE_SETTINGS: StoreSettings = {
   support_email: "support@alhayat.in",
   phone_number: "+91 87965 13654",
   whatsapp_number: "918796513654",
-  business_address: "Mumbai, Maharashtra, India",
+  business_address: "Pune, Maharashtra, India",
   working_hours: "Mon–Sat: 9 AM – 6 PM",
   instagram_url: "https://instagram.com",
   facebook_url: "https://facebook.com",

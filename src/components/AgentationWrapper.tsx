@@ -1,0 +1,22 @@
+"use client";
+
+import dynamic from "next/dynamic";
+
+// Load Agentation dynamically with SSR disabled to prevent server hydration mismatch errors
+const Agentation = dynamic(
+  () => import("agentation").then((mod) => mod.Agentation),
+  { ssr: false }
+);
+
+export default function AgentationWrapper() {
+  if (process.env.NODE_ENV !== "development") return null;
+
+  return (
+    <Agentation
+      endpoint="http://localhost:4747"
+      onSessionCreated={(sessionId) => {
+        console.log("Session started:", sessionId);
+      }}
+    />
+  );
+}

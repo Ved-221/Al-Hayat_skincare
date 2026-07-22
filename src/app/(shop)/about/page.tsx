@@ -107,64 +107,6 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ═══ DR. FARHEEN BIO ═══ */}
-      <section className="py-16 px-6 relative overflow-hidden" style={{ background: "#faf3ea" }}>
-        {/* Top wave */}
-        <div className="absolute top-0 left-0 w-full overflow-hidden rotate-180">
-          <svg viewBox="0 0 1200 60" preserveAspectRatio="none" className="w-full" style={{ height: "60px", display: "block" }}>
-            <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#fff8f1" />
-          </svg>
-        </div>
-
-        <div className="max-w-5xl mx-auto relative z-10 pt-8">
-          <div className="mb-2">
-            <span style={{ ...labelStyle, color: "#b22a2b" }}>THE FOUNDER</span>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-stretch">
-            {/* Text Card */}
-            <div
-              className="md:col-span-7 rounded-xl p-8 flex flex-col justify-center"
-              style={{ background: "#fff8f1", boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
-            >
-              <h2
-                style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(28px,4vw,44px)", fontWeight: 600, color: "#434b01", marginBottom: "16px" }}
-              >
-                Dr. Farheen
-              </h2>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: "italic", fontSize: "15px", color: "#47483a", lineHeight: 1.7, marginBottom: "16px" }}>
-                &ldquo;Skincare should not be a compromise between clinical results and natural purity. It must be the perfect synthesis of both.&rdquo;
-              </p>
-              <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "14px", color: "#47483a", lineHeight: 1.7 }}>
-                With over a decade of clinical experience in dermatology and a deep-rooted passion for holistic healing, Dr. Farheen established AL-HAYAT to bridge the gap between medical science and herbal lore. Her approach is uncompromising: meticulously sourced ingredients, clinically proven concentrations, and formulations that respect the skin&apos;s microbiome.
-              </p>
-            </div>
-
-            {/* Photo Card */}
-            <div
-              className="md:col-span-5 relative rounded-xl overflow-hidden group"
-              style={{ minHeight: "360px", boxShadow: "0 4px 20px rgba(0,0,0,0.08)" }}
-            >
-              <img
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJw-Rz4g-EHA_rhrYwYCdydd0leKV04DgY4Ou0izS3fvD5pt_KqgyXMAC8PtexttEzZSOTCSGgW6XJXe8lhS0fgWZSbCeLtpN2qpXATCI-iCjLkfXehQol0IH6fjN58f4Me3Z21KHlkeqp3B0zBJ2korJjqPPkuhuJvpzRI-lumDG9ngU-9MKPO6kD74hYAYf_F7waCtnr1AxiZyOcXPlU3h8xL0DtWZTqm6cfIOx6-1nNdfXe1O-6r15mNDVv_776S4mLARNYD1Iw"
-                alt="Dr. Farheen"
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-              />
-              <div className="absolute bottom-0 left-0 right-0 p-5" style={{ background: "linear-gradient(to top, rgba(26,26,26,0.75), transparent)" }}>
-                <span style={{ fontFamily: "'Dancing Script', cursive", fontSize: "28px", color: "#fff8f1" }}>Dr. Farheen</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom wave */}
-        <div className="absolute bottom-0 left-0 w-full overflow-hidden">
-          <svg viewBox="0 0 1200 60" preserveAspectRatio="none" className="w-full" style={{ height: "60px", display: "block" }}>
-            <path d="M0,30 C200,60 400,0 600,30 C800,60 1000,0 1200,30 L1200,60 L0,60 Z" fill="#fff8f1" />
-          </svg>
-        </div>
-      </section>
-
       {/* ═══ CRAFTSMANSHIP ═══ */}
       <section className="py-16 px-6" style={{ background: "#fff8f1" }}>
         <div className="max-w-5xl mx-auto">
@@ -238,25 +180,19 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
               {
                 name: "Beetroot",
                 tag: "BRIGHTENING",
                 desc: "Rich in Vitamin C and natural antioxidants, it combats pigmentation and provides a radiant, rosy glow.",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC2GaHl04l1TaqVbubTA8pKgsAq4xg3claUDh_04fUy1FvTXIwsREy-cx4L0DpCMzaWYQ9KXSIkG1NslCzl7R14iwkMiGdQOk-WEntWxUK5jwUce-F7zC-DxcSb3L6-3hvZDuccaeWcZz9UIzCpzw57z8ko-n8BZB7ZF2NsIrZ7qm7m0pt1yLBGQZqnONL7QZVuDvVe93tO-Fy2Q2PsBOFDYgx_kHQ5X0-KAsn6cFLol26D3pKmhWNEMqFEjz3kw9sXjhlcqCYj-8-4",
+                img: "/bgremoved_photos/beetroot.png",
               },
               {
                 name: "Neem",
                 tag: "CLARIFYING",
                 desc: "A powerhouse of antibacterial properties, neem clarifies the skin, preventing breakouts and soothing inflammation.",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCqgE7H8HeR-_o4A-oyEqDxFsCJq8hUqtzWUBl49qJgRUJzCcxcKm5qEkzGHaOVnhi5mghSPbeyC0Z9CiO0w7q7LHgkQwoagRrEES7g7ckwf_xDyFqRNL48FgdGlUesuei9vrJrP7oKcvFlQx5D-v20qPbwPGfu33TrjdWjuC_M2iOsGBk_SbKpH8soA6inwwHMIOm6lDPHound9FuPvGS_5AvGVkI-X-qoXBEqVMiHI3qEg9fQMP6ls5mtKbQgJ_iDrOa_np2R0AIH",
-              },
-              {
-                name: "Manjistha",
-                tag: "REJUVENATING",
-                desc: "Known as a 'blood purifier' in Ayurveda, it promotes a flawless complexion and supports natural cell turnover.",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuC6CC18xvoJdVMkAiXXbT4YnawZ9ub0ARSiFGAmaWXTuXr4G-nGiinhMUp0vrYU13vK6l_LXMJYyQLhO-k7J5n4Kyr3pfryq6hXb7JGF2f_cudERIXR6Dw2H5lUCOM2hkJndwHS7573fP_inBBiuYA-sAfvQU-i94xd8pnxsthS67d0Ch9bokbCuTv7gTrJECYUrrkgDivgSiDncJ3fulEaBRBsmwkmDKrvwS61IcxFpnkZpehHTHnS7hvOsHvdLjOGcN-9SH0B-vvY",
+                img: "/bgremoved_photos/neem.png",
               },
             ].map((ing) => (
               <div
@@ -264,8 +200,8 @@ export default function AboutPage() {
                 className="bg-white rounded-xl p-6 flex flex-col items-center text-center hover:-translate-y-1 transition-transform duration-300"
                 style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
               >
-                <div className="w-28 h-28 rounded-full overflow-hidden mb-5 border-4 border-[#EAE2D1]">
-                  <img src={ing.img} alt={ing.name} className="w-full h-full object-cover hover:scale-110 transition-transform duration-500" />
+                <div className="w-28 h-28 rounded-full overflow-hidden mb-5 border-4 border-[#EAE2D1] bg-[#faf3ea]">
+                  <img src={ing.img} alt={ing.name} className="w-full h-full object-contain p-2 hover:scale-110 transition-transform duration-500" />
                 </div>
                 <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", fontWeight: 600, color: "#434b01", marginBottom: "8px" }}>
                   {ing.name}
