@@ -3,7 +3,8 @@
 import React from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ShoppingCart, Heart } from "lucide-react";
+import { useState } from "react";
+import { ShoppingCart, Heart, Check } from "lucide-react";
 import { type Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
@@ -28,6 +29,7 @@ export function ProductRevealCard({
   const shouldReduceMotion = useReducedMotion();
   const shouldAnimate = enableAnimations && !shouldReduceMotion;
 
+  const [isAdded, setIsAdded] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
   const { items: wishlistItems, toggleWishlist } = useWishlistStore();
   const isFavorite = wishlistItems.some((item) => item.slug === product.slug);
@@ -45,7 +47,8 @@ export function ProductRevealCard({
       onAdd();
     } else {
       addItem(product, 1);
-      alert("Added to cart!");
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 1500);
     }
   };
 
@@ -264,8 +267,17 @@ export function ProductRevealCard({
                 className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-white hover:bg-[#343a01] active:scale-95 transition-all shadow-xs text-[11px] font-bold tracking-wider cursor-pointer border-none z-10"
                 style={{ background: "#434b01", fontFamily: "'Inter', sans-serif" }}
               >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                ADD TO CART
+                {isAdded ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    ADDED ✓
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart className="w-3.5 h-3.5" />
+                    ADD TO CART
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -351,8 +363,17 @@ export function ProductRevealCard({
               className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-white hover:opacity-95 transition-opacity shadow-xs text-xs font-bold tracking-wider cursor-pointer border-none"
               style={{ background: "#434b01" }}
             >
-              <ShoppingCart className="w-3.5 h-3.5" />
-              ADD TO CART
+                {isAdded ? (
+                  <>
+                    <Check className="w-3.5 h-3.5" />
+                    ADDED ✓
+                  </>
+                ) : (
+                  <>
+                    <ShoppingCart className="w-3.5 h-3.5" />
+                    ADD TO CART
+                  </>
+                )}
             </motion.button>
 
             {/* View Details Link + Wishlist Heart button */}
