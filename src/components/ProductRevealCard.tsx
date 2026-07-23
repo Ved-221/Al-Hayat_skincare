@@ -1,9 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { useState } from "react";
 import { ShoppingCart, Heart, Check } from "lucide-react";
 import { type Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
@@ -30,6 +29,17 @@ export function ProductRevealCard({
   const shouldAnimate = enableAnimations && !shouldReduceMotion;
 
   const [isAdded, setIsAdded] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const addItem = useCartStore((state) => state.addItem);
   const { items: wishlistItems, toggleWishlist } = useWishlistStore();
   const isFavorite = wishlistItems.some((item) => item.slug === product.slug);
@@ -285,7 +295,7 @@ export function ProductRevealCard({
       </Link>
 
       {/* Slide-Up Reveal Overlay */}
-      {enableHoverOverlay && (
+      {enableHoverOverlay && isDesktop && (
         <motion.div
           variants={overlayVariants}
           className="absolute inset-0 bg-[#fff8f1]/97 backdrop-blur-md flex flex-col justify-between p-5 z-20"
