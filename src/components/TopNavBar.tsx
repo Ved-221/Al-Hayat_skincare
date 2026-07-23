@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import CartDrawer from "./CartDrawer";
+import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import CategoryNavigation from "@/components/storefront/categories/CategoryNavigation";
@@ -41,6 +42,8 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
   const { getTotalItems } = useCartStore();
   const { items: wishlistItems } = useWishlistStore();
   const [mounted, setMounted] = useState(false);
+
+  useLockBodyScroll(mobileOpen);
   
   useEffect(() => {
     setMounted(true);
