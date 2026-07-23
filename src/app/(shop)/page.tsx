@@ -13,7 +13,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
   ScrollTrigger.config({ ignoreMobileResize: true });
-  ScrollTrigger.normalizeScroll(true);
 }
 
 const SCROLL_DISTANCE = 1575;
@@ -388,6 +387,8 @@ export default function Home() {
   // Initialize GSAP ScrollTrigger
   useEffect(() => {
     if (!isLoaded || introPlaying) return;
+
+    ScrollTrigger.normalizeScroll(true);
 
     const video = videoRef.current;
     const container = containerRef.current;
