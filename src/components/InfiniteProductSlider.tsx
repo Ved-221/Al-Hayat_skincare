@@ -2,33 +2,34 @@
 
 import { motion, useMotionValue, animate } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ProductRevealCard } from "@/components/ProductRevealCard";
 
-// Custom light-weight useMeasure hook using ResizeObserver to avoid external library dependencies
+// Custom light-weight useMeasure hook using ResizeObserver & scrollWidth to avoid external library dependencies
 function useMeasure() {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!ref.current) return;
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
+    const updateDimensions = () => {
+      if (ref.current) {
         setDimensions({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height,
+          width: ref.current.scrollWidth,
+          height: ref.current.scrollHeight,
         });
       }
-    });
+    };
+
+    updateDimensions();
+
+    const observer = new ResizeObserver(() => updateDimensions());
     observer.observe(ref.current);
     return () => observer.disconnect();
   }, []);
 
   return [ref, dimensions] as const;
 }
-
-// Local ProductCard removed in favor of ProductRevealCard
 
 interface InfiniteSliderProps {
   children: React.ReactNode;
@@ -44,7 +45,7 @@ export function InfiniteSlider({
   children,
   gap = 20,
   duration = 35,
-  durationOnHover = 120, // Slows down significantly when hovered for easy interaction
+  durationOnHover = 120, // Slows down significantly when touched/hovered for easy interaction
   direction = "horizontal",
   reverse = false,
   className,
@@ -101,7 +102,7 @@ export function InfiniteSlider({
     reverse,
   ]);
 
-  const hoverProps = durationOnHover
+  const interactionProps = durationOnHover
     ? {
         onHoverStart: () => {
           setIsTransitioning(true);
@@ -111,11 +112,19 @@ export function InfiniteSlider({
           setIsTransitioning(true);
           setCurrentDuration(duration);
         },
+        onTouchStart: () => {
+          setIsTransitioning(true);
+          setCurrentDuration(durationOnHover);
+        },
+        onTouchEnd: () => {
+          setIsTransitioning(true);
+          setCurrentDuration(duration);
+        },
       }
     : {};
 
   return (
-    <div className={cn("overflow-hidden w-full", className)}>
+    <div className={cn("overflow-hidden w-full relative", className)}>
       <motion.div
         className="flex w-max"
         style={{
@@ -126,7 +135,7 @@ export function InfiniteSlider({
           flexDirection: direction === "horizontal" ? "row" : "column",
         }}
         ref={ref}
-        {...hoverProps}
+        {...interactionProps}
       >
         {children}
         {children}
@@ -145,15 +154,15 @@ export default function InfiniteProductSlider({ productsList, addItem }: Infinit
     <InfiniteSlider
       gap={24}
       duration={35}
-      durationOnHover={150} // Slower speed on hover for easier card clicks
-      className="py-6 overflow-visible"
+      durationOnHover={150} // Slower speed on hover/touch for easier card clicks
+      className="py-4"
     >
       {productsList.map((product) => (
         <ProductRevealCard
           key={product.slug}
           product={product}
           enableHoverOverlay={false}
-          className="w-[290px] sm:w-[320px] md:w-[340px] flex-shrink-0"
+          className="w-[270px] sm:w-[300px] md:w-[340px] flex-shrink-0"
         />
       ))}
     </InfiniteSlider>
