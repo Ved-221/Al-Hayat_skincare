@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ShoppingCart, Heart, Check } from "lucide-react";
+import { ShoppingCart, Heart, Check, X } from "lucide-react";
 import { type Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
@@ -30,6 +30,7 @@ export function ProductRevealCard({
 
   const [isAdded, setIsAdded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [mobileOverlayOpen, setMobileOverlayOpen] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
@@ -43,6 +44,13 @@ export function ProductRevealCard({
   const addItem = useCartStore((state) => state.addItem);
   const { items: wishlistItems, toggleWishlist } = useWishlistStore();
   const isFavorite = wishlistItems.some((item) => item.slug === product.slug);
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (!isDesktop && enableHoverOverlay && !mobileOverlayOpen) {
+      e.preventDefault();
+      setMobileOverlayOpen(true);
+    }
+  };
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -152,8 +160,10 @@ export function ProductRevealCard({
   return (
     <motion.div
       initial="rest"
-      whileHover="hover"
+      whileHover={isDesktop ? "hover" : undefined}
+      animate={mobileOverlayOpen ? "hover" : "rest"}
       variants={containerVariants}
+      onClick={handleCardClick}
       className={`relative w-full rounded-2xl border border-gray-200/40 bg-white overflow-hidden shadow-xs hover:shadow-md cursor-pointer group flex flex-col justify-between ${className}`}
       style={{ minHeight: "410px" }}
     >
@@ -295,7 +305,7 @@ export function ProductRevealCard({
       </Link>
 
       {/* Slide-Up Reveal Overlay */}
-      {enableHoverOverlay && isDesktop && (
+      {enableHoverOverlay && (
         <motion.div
           variants={overlayVariants}
           className="absolute inset-0 bg-[#fff8f1]/97 backdrop-blur-md flex flex-col justify-between p-5 z-20"
@@ -319,10 +329,24 @@ export function ProductRevealCard({
                   {product.name}
                 </h4>
               </div>
-              <div className="text-right flex-shrink-0">
+              <div className="text-right flex-shrink-0 flex items-center gap-2">
                 <span className="text-[16px] font-bold text-[#434b01]">
                   {product.price}
                 </span>
+                {!isDesktop && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setMobileOverlayOpen(false);
+                    }}
+                    className="p-1 rounded-full bg-[#434b01]/10 text-[#434b01] hover:text-[#b22a2b] transition-colors cursor-pointer"
+                    aria-label="Close details"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
 
