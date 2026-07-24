@@ -58,8 +58,7 @@ export async function getFeaturedStorefrontCategories(): Promise<StorefrontCateg
         const { count } = await supabase
           .from("products")
           .select("*", { count: "exact", head: true })
-          .eq("category_id", cat.id)
-          .is("deleted_at", null);
+          .eq("category_id", cat.id);
 
         return {
           ...(cat as Category),
@@ -88,8 +87,7 @@ export async function getCategoriesWithProductCounts(): Promise<StorefrontCatego
         const { count } = await supabase
           .from("products")
           .select("*", { count: "exact", head: true })
-          .eq("category_id", cat.id)
-          .is("deleted_at", null);
+          .eq("category_id", cat.id);
 
         return {
           ...cat,
@@ -129,7 +127,6 @@ export async function getStorefrontCategoryBySlug(
       .from("products")
       .select("*")
       .eq("category_id", category.id)
-      .is("deleted_at", null)
       .order("id", { ascending: true });
 
     if (prodError) {
