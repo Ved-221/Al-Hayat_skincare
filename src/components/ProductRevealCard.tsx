@@ -21,7 +21,7 @@ export function ProductRevealCard({
   product,
   onAdd,
   enableAnimations = true,
-  showFavoriteTopRight = false,
+  showFavoriteTopRight = true, // Default to true so heart icons are visible across grids on all devices
   enableHoverOverlay = true,
   className = "",
 }: ProductRevealCardProps) {
@@ -31,8 +31,10 @@ export function ProductRevealCard({
   const [isAdded, setIsAdded] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [mobileOverlayOpen, setMobileOverlayOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
@@ -43,7 +45,9 @@ export function ProductRevealCard({
 
   const addItem = useCartStore((state) => state.addItem);
   const { items: wishlistItems, toggleWishlist } = useWishlistStore();
-  const isFavorite = wishlistItems.some((item) => item.slug === product.slug);
+  
+  // Guard against hydration mismatch (server vs client state) by checking mounted status first
+  const isFavorite = mounted && wishlistItems.some((item) => item.slug === product.slug);
 
   const handleCardClick = (e: React.MouseEvent) => {
     if (!isDesktop && enableHoverOverlay && !mobileOverlayOpen) {
@@ -167,45 +171,11 @@ export function ProductRevealCard({
       className={`relative w-full rounded-2xl border border-gray-200/40 bg-white overflow-hidden shadow-xs hover:shadow-md cursor-pointer group flex flex-col justify-between ${className}`}
       style={{ minHeight: "410px" }}
     >
-      {/* Top Part: Image and badges */}
-      <Link href={`/product/${product.slug}`} className="flex flex-col flex-1 text-inherit no-underline">
-        <div className="flex flex-col flex-1">
-          {/* Image Container */}
-          <div className="relative overflow-hidden w-full aspect-square bg-[#faf3ea]">
-            {/* Badge */}
-            {product.badge && (
-              <span
-                className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-md text-white shadow-xs"
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: "9px",
-                  fontWeight: 700,
-                  letterSpacing: "0.1em",
-                  background: "#b22a2b",
-                }}
-              >
-                {product.badge}
-              </span>
-            )}
-
-            {/* Favorite Button (Visible at rest state if showFavoriteTopRight is enabled) */}
-            {showFavoriteTopRight && (
-              <motion.button
-                onClick={handleFavorite}
-                variants={favoriteVariants}
-                animate={isFavorite ? "favorite" : "rest"}
-                className={`absolute top-3 right-3 z-10 w-10 h-10 rounded-full border border-gray-200/30 shadow-xs transition-colors flex items-center justify-center group ${isFavorite
-                    ? "bg-red-500 text-white"
-                    : "bg-white/90 text-[#787868] hover:text-[#b22a2b] hover:border-[#b22a2b]"
-                  }`}
-              >
-                <Heart
-                  className={`w-4 h-4 transition-colors ${isFavorite ? "fill-current" : "fill-none group-hover:fill-current"}`}
-                />
-              </motion.button>
-            )}
-
-            {/* Product Image */}
+      {/* Top Part: Image and badges (separately linked to avoid invalid button-inside-anchor nesting) */}
+      <div className="flex flex-col flex-1">
+        {/* Image Container */}
+        <div className="relative overflow-hidden w-full aspect-square bg-[#faf3ea]">
+          <Link href={`/product/${product.slug}`} className="block w-full h-full">
             <motion.img
               src={product.img}
               alt={product.name}
@@ -213,76 +183,110 @@ export function ProductRevealCard({
               variants={imageVariants}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
             />
-          </div>
+          </Link>
 
-          {/* Content Area */}
-          <div className="p-4 flex-1 flex flex-col justify-between">
-            <div className="space-y-1">
-              {/* Category */}
-              <p
+          {/* Badge */}
+          {product.badge && (
+            <span
+              className="absolute top-3 left-3 z-10 px-2.5 py-1 rounded-md text-white shadow-xs pointer-events-none"
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: "9px",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                background: "#b22a2b",
+              }}
+            >
+              {product.badge}
+            </span>
+          )}
+
+          {/* Favorite Button (top right, outside link to prevent click hijacking) */}
+          {showFavoriteTopRight && (
+            <motion.button
+              type="button"
+              onClick={handleFavorite}
+              variants={favoriteVariants}
+              animate={isFavorite ? "favorite" : "rest"}
+              className={`absolute top-3 right-3 z-10 w-10 h-10 rounded-full border border-gray-200/30 shadow-xs transition-colors flex items-center justify-center group ${isFavorite
+                  ? "bg-red-500 text-white border-red-500"
+                  : "bg-white/90 text-[#787868] hover:text-[#b22a2b] hover:border-[#b22a2b]"
+                }`}
+            >
+              <Heart
+                className={`w-4 h-4 transition-colors ${isFavorite ? "fill-current" : "fill-none group-hover:fill-current"}`}
+              />
+            </motion.button>
+          )}
+        </div>
+
+        {/* Content Area */}
+        <div className="p-4 flex-1 flex flex-col justify-between">
+          <Link href={`/product/${product.slug}`} className="block text-inherit no-underline space-y-1">
+            {/* Category */}
+            <p
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: "9px",
+                fontWeight: 700,
+                color: "#b22a2b",
+                letterSpacing: "0.1em",
+                textTransform: "uppercase",
+              }}
+            >
+              {product.category}
+            </p>
+
+            {/* Title */}
+            <h3
+              style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: "16px",
+                fontWeight: 600,
+                color: "#434b01",
+              }}
+              className="line-clamp-1 group-hover:text-[#b22a2b] transition-colors"
+            >
+              {product.name}
+            </h3>
+
+            {/* Benefit / Small Desc */}
+            <p
+              style={{
+                fontFamily: "'Inter', sans-serif",
+                fontSize: "12px",
+                color: "#47483a",
+                lineHeight: 1.4,
+              }}
+              className="line-clamp-2"
+            >
+              {product.benefit || product.desc}
+            </p>
+          </Link>
+
+          {/* Price & Action Row (separately aligned) */}
+          <div className="pt-3 flex items-center justify-between gap-2 mt-auto border-t border-gray-100/80">
+            <div className="flex items-center gap-1.5">
+              <span
                 style={{
                   fontFamily: "'Inter', sans-serif",
-                  fontSize: "9px",
-                  fontWeight: 700,
-                  color: "#b22a2b",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                }}
-              >
-                {product.category}
-              </p>
-
-              {/* Title */}
-              <h3
-                style={{
-                  fontFamily: "'Playfair Display', serif",
                   fontSize: "16px",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   color: "#434b01",
                 }}
-                className="line-clamp-1 group-hover:text-[#b22a2b] transition-colors"
               >
-                {product.name}
-              </h3>
-
-              {/* Benefit / Small Desc */}
-              <p
-                style={{
-                  fontFamily: "'Inter', sans-serif",
-                  fontSize: "12px",
-                  color: "#47483a",
-                  lineHeight: 1.4,
-                }}
-                className="line-clamp-2"
-              >
-                {product.benefit || product.desc}
-              </p>
-            </div>
-
-            {/* Price & Action Row (Clean price view before hover reveal) */}
-            <div className="pt-3 flex items-center justify-between gap-2 mt-auto border-t border-gray-100/80">
-              <div className="flex items-center gap-1.5">
-                <span
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: "16px",
-                    fontWeight: 700,
-                    color: "#434b01",
-                  }}
-                >
-                  {product.price}
-                </span>
-                {product.priceOriginal &&
-                  product.priceOriginal !== product.price && (
-                    <span className="text-xs text-gray-400 line-through">
-                      {product.priceOriginal}
-                    </span>
-                  )}
-              </div>
+                {product.price}
+              </span>
+              {product.priceOriginal &&
+                product.priceOriginal !== product.price && (
+                  <span className="text-xs text-gray-400 line-through">
+                    {product.priceOriginal}
+                  </span>
+                )}
             </div>
           </div>
         </div>
-      </Link>
+      </div>
 
       {/* Slide-Up Reveal Overlay */}
       {enableHoverOverlay && (
@@ -321,7 +325,7 @@ export function ProductRevealCard({
                       e.stopPropagation();
                       setMobileOverlayOpen(false);
                     }}
-                    className="p-1 rounded-full bg-[#434b01]/10 text-[#434b01] hover:text-[#b22a2b] transition-colors cursor-pointer"
+                    className="p-1 rounded-full bg-[#434b01]/10 text-[#434b01] hover:text-[#b22a2b] transition-colors cursor-pointer border-none"
                     aria-label="Close details"
                   >
                     <X className="w-4 h-4" />
@@ -368,10 +372,11 @@ export function ProductRevealCard({
             </div>
           </motion.div>
 
-          {/* Action Buttons */}
+          {/* Action/Overlay Buttons */}
           <motion.div variants={contentVariants} className="space-y-2 pt-2">
             {/* Add to Cart */}
             <motion.button
+              type="button"
               onClick={handleAddToCart}
               variants={buttonVariants_motion}
               className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-white hover:opacity-95 transition-opacity shadow-xs text-xs font-bold tracking-wider cursor-pointer border-none"
@@ -394,16 +399,13 @@ export function ProductRevealCard({
             <div className="flex gap-2 items-center">
               <Link
                 href={`/product/${product.slug}`}
-                className="flex-1 block text-decoration-none"
+                className="flex-1 flex items-center justify-center py-2.5 rounded-xl border border-[#434b01] text-[#434b01] hover:bg-[#434b01]/5 transition-all text-xs font-bold tracking-wider text-center no-underline cursor-pointer"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                <motion.button
-                  variants={buttonVariants_motion}
-                  className="flex items-center justify-center w-full py-2.5 rounded-xl border border-[#434b01] text-[#434b01] hover:bg-[#434b01]/5 transition-all text-xs font-bold tracking-wider cursor-pointer bg-transparent"
-                >
-                  VIEW DETAILS
-                </motion.button>
+                VIEW DETAILS
               </Link>
               <motion.button
+                type="button"
                 onClick={handleFavorite}
                 variants={favoriteVariants}
                 animate={isFavorite ? "favorite" : "rest"}

@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PRODUCTS, Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
+import { useWishlistStore } from "@/store/wishlistStore";
+import { Heart } from "lucide-react";
 
 const WHATSAPP_NUMBER = "918796513654"; // Updated as per PDF requirements
 
@@ -31,6 +33,12 @@ export default function ProductDetailPage({ params }: Props) {
   const router = useRouter();
   const [qty, setQty] = useState(1);
   const addItem = useCartStore((state) => state.addItem);
+  const { items: wishlistItems, toggleWishlist } = useWishlistStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Find product by slug initially from static list, then fetch updated from Supabase
   const initialProduct = PRODUCTS.find((p) => p.slug === slug) || null;
@@ -112,6 +120,8 @@ export default function ProductDetailPage({ params }: Props) {
     );
   }
 
+  const isFavorite = mounted && product ? wishlistItems.some((item) => item.slug === product.slug) : false;
+
   return (
     <main className="min-h-screen bg-[#fff8f1] pt-[72px]">
       {/* ═══ TOP SECTION: 2-col layout ═══ */}
@@ -131,13 +141,19 @@ export default function ProductDetailPage({ params }: Props) {
                 {product.badge}
               </span>
             )}
-            <button className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full border border-gray-200/30 bg-white/95 flex items-center justify-center shadow-sm transition duration-200 transform hover:scale-110 hover:border-[#b22a2b] group">
-              <span
-                className="material-symbols-outlined text-[18px] text-[#787868] transition-colors duration-200 group-hover:text-[#b22a2b]"
-                style={{ fontVariationSettings: "'FILL' 0" }}
-              >
-                favorite
-              </span>
+            <button
+              onClick={() => toggleWishlist(product)}
+              className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full border shadow-sm transition duration-200 transform hover:scale-110 flex items-center justify-center group cursor-pointer ${
+                isFavorite
+                  ? "bg-red-500 text-white border-red-500"
+                  : "bg-white/95 text-[#787868] border-gray-200/30 hover:border-[#b22a2b] hover:text-[#b22a2b]"
+              }`}
+            >
+              <Heart
+                className={`w-[18px] h-[18px] transition-colors ${
+                  isFavorite ? "fill-current" : "fill-none group-hover:fill-current"
+                }`}
+              />
             </button>
             <img
               src={product.img}
