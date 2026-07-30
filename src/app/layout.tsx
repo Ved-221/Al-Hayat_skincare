@@ -52,6 +52,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${inter.variable} ${cormorantGaramond.variable} ${playfairDisplay.variable} ${dancingScript.variable} antialiased`}
     >
       <head>
@@ -60,7 +61,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         {children}
         <AgentationWrapper />
       </body>

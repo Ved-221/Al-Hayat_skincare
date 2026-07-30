@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Heart, Check, X } from "lucide-react";
 import { type Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
@@ -28,9 +28,29 @@ export function ProductRevealCard({
   const shouldReduceMotion = useReducedMotion();
   const shouldAnimate = enableAnimations && !shouldReduceMotion;
 
+  const [isAdded, setIsAdded] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const [mobileOverlayOpen, setMobileOverlayOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const addItem = useCartStore((state) => state.addItem);
   const { items: wishlistItems, toggleWishlist } = useWishlistStore();
   const isFavorite = wishlistItems.some((item) => item.slug === product.slug);
+
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (!isDesktop && enableHoverOverlay && !mobileOverlayOpen) {
+      e.preventDefault();
+      setMobileOverlayOpen(true);
+    }
+  };
 
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -45,7 +65,8 @@ export function ProductRevealCard({
       onAdd();
     } else {
       addItem(product, 1);
-      alert("Added to cart!");
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 1500);
     }
   };
 
@@ -56,15 +77,15 @@ export function ProductRevealCard({
     },
     hover: shouldAnimate
       ? {
-          scale: 1.02,
-          y: -6,
-          transition: {
-            type: "spring",
-            stiffness: 300,
-            damping: 25,
-            mass: 0.8,
-          },
-        }
+        scale: 1.02,
+        y: -6,
+        transition: {
+          type: "spring",
+          stiffness: 300,
+          damping: 25,
+          mass: 0.8,
+        },
+      }
       : {},
   };
 
@@ -112,14 +133,14 @@ export function ProductRevealCard({
     rest: { scale: 1, y: 0 },
     hover: shouldAnimate
       ? {
-          scale: 1.02,
-          y: -1,
-          transition: {
-            type: "spring",
-            stiffness: 400,
-            damping: 25,
-          },
-        }
+        scale: 1.02,
+        y: -1,
+        transition: {
+          type: "spring",
+          stiffness: 400,
+          damping: 25,
+        },
+      }
       : {},
     tap: shouldAnimate ? { scale: 0.98 } : {},
   };
@@ -139,8 +160,10 @@ export function ProductRevealCard({
   return (
     <motion.div
       initial="rest"
-      whileHover="hover"
+      whileHover={isDesktop ? "hover" : undefined}
+      animate={mobileOverlayOpen ? "hover" : "rest"}
       variants={containerVariants}
+      onClick={handleCardClick}
       className={`relative w-full rounded-2xl border border-gray-200/40 bg-white overflow-hidden shadow-xs hover:shadow-md cursor-pointer group flex flex-col justify-between ${className}`}
       style={{ minHeight: "410px" }}
     >
@@ -171,11 +194,10 @@ export function ProductRevealCard({
                 onClick={handleFavorite}
                 variants={favoriteVariants}
                 animate={isFavorite ? "favorite" : "rest"}
-                className={`absolute top-3 right-3 z-10 w-10 h-10 rounded-full border border-gray-200/30 shadow-xs transition-colors flex items-center justify-center group ${
-                  isFavorite
+                className={`absolute top-3 right-3 z-10 w-10 h-10 rounded-full border border-gray-200/30 shadow-xs transition-colors flex items-center justify-center group ${isFavorite
                     ? "bg-red-500 text-white"
                     : "bg-white/90 text-[#787868] hover:text-[#b22a2b] hover:border-[#b22a2b]"
-                }`}
+                  }`}
               >
                 <Heart
                   className={`w-4 h-4 transition-colors ${isFavorite ? "fill-current" : "fill-none group-hover:fill-current"}`}
@@ -237,7 +259,7 @@ export function ProductRevealCard({
               </p>
             </div>
 
-            {/* Price & Action Row */}
+            {/* Price & Action Row (Clean price view before hover reveal) */}
             <div className="pt-3 flex items-center justify-between gap-2 mt-auto border-t border-gray-100/80">
               <div className="flex items-center gap-1.5">
                 <span
@@ -257,16 +279,6 @@ export function ProductRevealCard({
                     </span>
                   )}
               </div>
-
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-white hover:bg-[#343a01] active:scale-95 transition-all shadow-xs text-[11px] font-bold tracking-wider cursor-pointer border-none z-10"
-                style={{ background: "#434b01", fontFamily: "'Inter', sans-serif" }}
-              >
-                <ShoppingCart className="w-3.5 h-3.5" />
-                ADD TO CART
-              </button>
             </div>
           </div>
         </div>
@@ -297,10 +309,24 @@ export function ProductRevealCard({
                   {product.name}
                 </h4>
               </div>
-              <div className="text-right flex-shrink-0">
+              <div className="text-right flex-shrink-0 flex items-center gap-2">
                 <span className="text-[16px] font-bold text-[#434b01]">
                   {product.price}
                 </span>
+                {!isDesktop && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setMobileOverlayOpen(false);
+                    }}
+                    className="p-1 rounded-full bg-[#434b01]/10 text-[#434b01] hover:text-[#b22a2b] transition-colors cursor-pointer"
+                    aria-label="Close details"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
 
@@ -351,8 +377,17 @@ export function ProductRevealCard({
               className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-white hover:opacity-95 transition-opacity shadow-xs text-xs font-bold tracking-wider cursor-pointer border-none"
               style={{ background: "#434b01" }}
             >
-              <ShoppingCart className="w-3.5 h-3.5" />
-              ADD TO CART
+              {isAdded ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  ADDED ✓
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  ADD TO CART
+                </>
+              )}
             </motion.button>
 
             {/* View Details Link + Wishlist Heart button */}
@@ -372,11 +407,10 @@ export function ProductRevealCard({
                 onClick={handleFavorite}
                 variants={favoriteVariants}
                 animate={isFavorite ? "favorite" : "rest"}
-                className={`w-9 h-9 rounded-full border shadow-xs transition-colors flex items-center justify-center cursor-pointer group ${
-                  isFavorite
+                className={`w-9 h-9 rounded-full border shadow-xs transition-colors flex items-center justify-center cursor-pointer group ${isFavorite
                     ? "bg-red-500 text-white border-red-500"
                     : "bg-white text-[#787868] hover:text-[#b22a2b] border-gray-200/60"
-                }`}
+                  }`}
               >
                 <Heart
                   className={`w-4 h-4 transition-colors ${isFavorite ? "fill-current" : "fill-none group-hover:fill-current"}`}

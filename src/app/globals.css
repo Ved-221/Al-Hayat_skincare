@@ -111,13 +111,13 @@ body.intro-active {
   overflow: hidden;
 }
 
-/* ── Cropped Video Layout to hide KlingAi watermark ── */
+/* ── Video Layout ── */
 .video-container-cropped {
   position: relative;
   width: 100%;
   height: 100svh;
   overflow: hidden;
-  background-color: #0a0a0a;
+  background-color: #d6c6aa;
 }
 
 .video-element-cropped {
@@ -125,7 +125,32 @@ body.intro-active {
   top: 0;
   left: 0;
   width: 100%;
-  height: 105%; /* 5% extra height to crop the bottom watermark */
+  height: 105%; /* 5% extra height to crop bottom watermark */
   object-fit: cover;
   will-change: transform;
+}
+
+@media (max-width: 767px) {
+  .video-container-cropped {
+    background-color: #d6c6aa;
+  }
+
+  .video-element-cropped {
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: contain;
+    object-position: center;
+  }
+}
+
+/* ── No Scrollbar Helper ── */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

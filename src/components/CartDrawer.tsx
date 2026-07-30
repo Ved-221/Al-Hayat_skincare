@@ -1,6 +1,7 @@
 "use client";
 
 import { useCartStore } from "@/store/cartStore";
+import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 import Link from "next/link";
 
 interface CartDrawerProps {
@@ -10,6 +11,8 @@ interface CartDrawerProps {
 
 export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
   const { items, removeItem, updateQuantity, getSubtotal } = useCartStore();
+
+  useLockBodyScroll(isOpen);
 
   return (
     <>

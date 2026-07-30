@@ -75,10 +75,7 @@ Thank you.`;
  * Throws an error if NEXT_PUBLIC_WHATSAPP_NUMBER is not set.
  */
 export function generateWhatsAppUrl(message: string): string {
-  const businessNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
-  if (!businessNumber) {
-    throw new Error("NEXT_PUBLIC_WHATSAPP_NUMBER is not defined in environment variables.");
-  }
+  const businessNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918796513654";
   
   // Clean up any non-numeric characters from phone number just in case
   const cleanNumber = businessNumber.replace(/\D/g, "");

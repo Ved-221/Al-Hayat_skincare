@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
 import CartDrawer from "./CartDrawer";
+import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import CategoryNavigation from "@/components/storefront/categories/CategoryNavigation";
@@ -20,8 +21,6 @@ const NAV_LINKS_BEFORE = [
 
 const NAV_LINKS_AFTER = [
   { label: "About", href: "/about" },
-  { label: "Ingredients", href: "/ingredients" },
-  { label: "Reviews", href: "/reviews" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -33,7 +32,7 @@ interface TopNavBarProps {
 export default function TopNavBar({ categories = [], settings }: TopNavBarProps) {
   const storeName = settings?.store_name || "AL-HAYAT";
   const whatsappNumber = settings?.whatsapp_number || WHATSAPP_NUMBER;
-  const logoUrl = settings?.logo_url || null;
+  const logoUrl = settings?.logo_url || "/logo_withoutbg.png";
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
@@ -41,6 +40,8 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
   const { getTotalItems } = useCartStore();
   const { items: wishlistItems } = useWishlistStore();
   const [mounted, setMounted] = useState(false);
+
+  useLockBodyScroll(mobileOpen);
   
   useEffect(() => {
     setMounted(true);
@@ -53,7 +54,7 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
     }
 
     const handleScroll = () => {
-      const scrollDistance = 1575; // matches TOTAL_FRAMES * pixelsPerFrame in page.tsx
+      const scrollDistance = 3500; // matches SCROLL_DISTANCE in page.tsx
       setIsVisible(window.scrollY >= scrollDistance);
     };
 
@@ -83,59 +84,73 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
           className="flex items-center justify-between w-full px-6 py-3 mx-auto"
           style={{ maxWidth: "1280px" }}
         >
-          {/* ─── Left: Desktop Nav Links ─── */}
-          <nav className="hidden md:flex items-center gap-5 lg:gap-6 flex-1">
-            {NAV_LINKS_BEFORE.map((link) => {
-              const isActive =
-                (link.href === "/" && pathname === "/") ||
-                (link.href !== "/" && pathname.startsWith(link.href) && !pathname.startsWith("/products/category"));
-              return (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: "13px",
-                    fontWeight: isActive ? 700 : 400,
-                    color: isActive ? "#b22a2b" : "#47483a",
-                    textDecoration: "none",
-                    borderBottom: isActive ? "2px solid #b22a2b" : "2px solid transparent",
-                    paddingBottom: "2px",
-                    transition: "color 0.2s, border-color 0.2s",
-                  }}
-                  className="hover:text-[#b22a2b] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
+          {/* ─── Left: Desktop Nav Links & Logo ─── */}
+          <div className="hidden md:flex items-center gap-4 flex-1">
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 mr-2 group"
+              style={{ textDecoration: "none" }}
+            >
+              <img
+                src={logoUrl}
+                alt={storeName}
+                className="h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              />
+            </Link>
 
-            {/* Dynamic Categories Dropdown */}
-            <CategoryNavigation categories={categories} />
+            <nav className="flex items-center gap-5 lg:gap-6">
+              {NAV_LINKS_BEFORE.map((link) => {
+                const isActive =
+                  (link.href === "/" && pathname === "/") ||
+                  (link.href !== "/" && pathname.startsWith(link.href) && !pathname.startsWith("/products/category"));
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: "13px",
+                      fontWeight: isActive ? 700 : 400,
+                      color: isActive ? "#b22a2b" : "#47483a",
+                      textDecoration: "none",
+                      borderBottom: isActive ? "2px solid #b22a2b" : "2px solid transparent",
+                      paddingBottom: "2px",
+                      transition: "color 0.2s, border-color 0.2s",
+                    }}
+                    className="hover:text-[#b22a2b] transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
 
-            {NAV_LINKS_AFTER.map((link) => {
-              const isActive = pathname.startsWith(link.href);
-              return (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  style={{
-                    fontFamily: "'Inter', sans-serif",
-                    fontSize: "13px",
-                    fontWeight: isActive ? 700 : 400,
-                    color: isActive ? "#b22a2b" : "#47483a",
-                    textDecoration: "none",
-                    borderBottom: isActive ? "2px solid #b22a2b" : "2px solid transparent",
-                    paddingBottom: "2px",
-                    transition: "color 0.2s, border-color 0.2s",
-                  }}
-                  className="hover:text-[#b22a2b] transition-colors"
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
+              {/* Dynamic Categories Dropdown */}
+              <CategoryNavigation categories={categories} />
+
+              {NAV_LINKS_AFTER.map((link) => {
+                const isActive = pathname.startsWith(link.href);
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      fontSize: "13px",
+                      fontWeight: isActive ? 700 : 400,
+                      color: isActive ? "#b22a2b" : "#47483a",
+                      textDecoration: "none",
+                      borderBottom: isActive ? "2px solid #b22a2b" : "2px solid transparent",
+                      paddingBottom: "2px",
+                      transition: "color 0.2s, border-color 0.2s",
+                    }}
+                    className="hover:text-[#b22a2b] transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
 
           {/* ─── Mobile Hamburger ─── */}
           <button
@@ -146,28 +161,13 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
             <span className="material-symbols-outlined" style={{ fontSize: "26px" }}>menu</span>
           </button>
 
-          {/* ─── Center: Brand Logo ─── */}
+          {/* ─── Mobile Center Logo ─── */}
           <Link
             href="/"
-            className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 flex items-center justify-center"
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(20px,3vw,28px)",
-              fontWeight: 700,
-              color: "#434b01",
-              letterSpacing: "-0.02em",
-              textDecoration: "none",
-              lineHeight: 1,
-              whiteSpace: "nowrap",
-              flex: "1",
-              textAlign: "center",
-            }}
+            className="md:hidden flex items-center justify-center flex-1"
+            style={{ textDecoration: "none" }}
           >
-            {logoUrl ? (
-              <img src={logoUrl} alt={storeName} className="h-8 md:h-10 object-contain max-w-[180px]" />
-            ) : (
-              storeName
-            )}
+            <img src={logoUrl} alt={storeName} className="h-8 object-contain max-w-[140px]" />
           </Link>
 
           {/* ─── Right: WhatsApp CTA + Search ─── */}

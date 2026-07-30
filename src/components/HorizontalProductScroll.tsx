@@ -1,3 +1,4 @@
+// UNUSED — not currently imported anywhere. If reintroducing, mobile touch scroll behavior (sticky + 100vh + scroll-jacked horizontal translate) needs dedicated mobile testing before shipping — see mobile audit notes.
 "use client";
 
 import { motion, useTransform, useScroll } from "framer-motion";
