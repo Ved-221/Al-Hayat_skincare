@@ -6,7 +6,7 @@ import { PRODUCTS } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import FeaturedCategoriesSection from "@/components/storefront/categories/FeaturedCategoriesSection";
 import { ExpandingCards, CardItem } from "@/components/ExpandingCards";
-import InfiniteProductSlider from "@/components/InfiniteProductSlider";
+import BestSellersCarousel from "@/components/BestSellersCarousel";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -427,7 +427,7 @@ export default function Home() {
             pin: true,
             scrub: 0.5,
             invalidateOnRefresh: true,
-            onUpdate: (self) => {
+            onUpdate: (self: any) => {
               video.currentTime = proxy.currentTime;
 
               if (progressFillRef.current) {
@@ -729,7 +729,7 @@ export default function Home() {
           </div>
 
           <div className="w-full">
-            <InfiniteProductSlider productsList={productsList} addItem={addItem} />
+            <BestSellersCarousel productsList={productsList} addItem={addItem} />
           </div>
         </section>
 

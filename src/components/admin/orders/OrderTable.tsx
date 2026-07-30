@@ -26,54 +26,95 @@ export function formatOrderDate(dateString: string): string {
 
 export default function OrderTable({ orders }: OrderTableProps) {
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-left text-sm">
-          <thead>
-            <tr className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
-              <th className="py-3.5 px-4 font-semibold text-gray-900">Order Number</th>
-              <th className="py-3.5 px-4 font-semibold text-gray-900">Customer Name</th>
-              <th className="py-3.5 px-4 font-semibold text-gray-900">Phone</th>
-              <th className="py-3.5 px-4 font-semibold text-gray-900">Total</th>
-              <th className="py-3.5 px-4 font-semibold text-gray-900">Status</th>
-              <th className="py-3.5 px-4 font-semibold text-gray-900">Date</th>
-              <th className="py-3.5 px-4 font-semibold text-gray-900 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
-                <td className="py-4 px-4 font-mono text-sm font-semibold text-gray-900">
-                  {order.order_number}
-                </td>
-                <td className="py-4 px-4 font-medium text-gray-700">
-                  {order.customer_name}
-                </td>
-                <td className="py-4 px-4 text-gray-500 font-mono text-xs">
-                  {order.customer_phone}
-                </td>
-                <td className="py-4 px-4 font-mono font-bold text-gray-900">
-                  ₹{order.total_amount}
-                </td>
-                <td className="py-4 px-4">
-                  <StatusBadge status={order.status} />
-                </td>
-                <td className="py-4 px-4 text-xs text-gray-500 whitespace-nowrap">
-                  {formatOrderDate(order.created_at)}
-                </td>
-                <td className="py-4 px-4 text-right">
-                  <Link
-                    href={`/admin/orders/${order.id}`}
-                    className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
-                  >
-                    View
-                  </Link>
-                </td>
+    <>
+      {/* ── Desktop Table View (hidden below lg) ── */}
+      <div className="hidden lg:block overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse text-left text-sm">
+            <thead>
+              <tr className="border-b border-gray-200 bg-gray-50 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                <th className="py-3.5 px-4 font-semibold text-gray-900">Order Number</th>
+                <th className="py-3.5 px-4 font-semibold text-gray-900">Customer Name</th>
+                <th className="py-3.5 px-4 font-semibold text-gray-900">Phone</th>
+                <th className="py-3.5 px-4 font-semibold text-gray-900">Total</th>
+                <th className="py-3.5 px-4 font-semibold text-gray-900">Status</th>
+                <th className="py-3.5 px-4 font-semibold text-gray-900">Date</th>
+                <th className="py-3.5 px-4 font-semibold text-gray-900 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {orders.map((order) => (
+                <tr key={order.id} className="hover:bg-gray-50/80 transition-colors">
+                  <td className="py-4 px-4 font-mono text-sm font-semibold text-gray-900">
+                    {order.order_number}
+                  </td>
+                  <td className="py-4 px-4 font-medium text-gray-700">
+                    {order.customer_name}
+                  </td>
+                  <td className="py-4 px-4 text-gray-500 font-mono text-xs">
+                    {order.customer_phone}
+                  </td>
+                  <td className="py-4 px-4 font-mono font-bold text-gray-900">
+                    ₹{order.total_amount}
+                  </td>
+                  <td className="py-4 px-4">
+                    <StatusBadge status={order.status} />
+                  </td>
+                  <td className="py-4 px-4 text-xs text-gray-500 whitespace-nowrap">
+                    {formatOrderDate(order.created_at)}
+                  </td>
+                  <td className="py-4 px-4 text-right">
+                    <Link
+                      href={`/admin/orders/${order.id}`}
+                      className="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-semibold text-gray-700 shadow-xs hover:bg-gray-50 transition-colors"
+                    >
+                      View
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+
+      {/* ── Mobile Card View (visible below lg) ── */}
+      <div className="block lg:hidden space-y-4">
+        {orders.map((order) => (
+          <div key={order.id} className="rounded-xl border border-gray-200 bg-white p-4 shadow-xs hover:shadow-md transition-shadow">
+            <div className="flex items-center justify-between mb-3 border-b border-gray-100 pb-3">
+              <span className="font-mono text-sm font-bold text-gray-900">{order.order_number}</span>
+              <StatusBadge status={order.status} />
+            </div>
+            
+            <div className="space-y-2 mb-4">
+              <div className="flex justify-between items-start">
+                <span className="text-xs text-gray-500">Customer</span>
+                <span className="text-sm font-medium text-gray-800 text-right">{order.customer_name}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Phone</span>
+                <span className="text-xs font-mono text-gray-600">{order.customer_phone}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Total</span>
+                <span className="text-sm font-mono font-bold text-gray-900">₹{order.total_amount}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-xs text-gray-500">Date</span>
+                <span className="text-xs text-gray-600">{formatOrderDate(order.created_at)}</span>
+              </div>
+            </div>
+            
+            <Link
+              href={`/admin/orders/${order.id}`}
+              className="flex w-full items-center justify-center rounded-lg bg-gray-50 px-4 py-2.5 text-sm font-semibold text-gray-700 border border-gray-200 hover:bg-gray-100 transition-colors"
+            >
+              View Order Details
+            </Link>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

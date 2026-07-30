@@ -16,11 +16,13 @@ export default async function ShopLayout({
   ]);
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col relative">
       <TopNavBar categories={categories} settings={settings} />
-      {children}
+      <main className="flex-1 flex flex-col w-full">
+        {children}
+      </main>
       <Footer settings={settings} />
       <WhatsAppButton whatsappNumber={settings.whatsapp_number} />
-    </>
+    </div>
   );
 }

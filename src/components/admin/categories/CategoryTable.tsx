@@ -98,7 +98,8 @@ export default function CategoryTable({
 
   return (
     <>
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
+      {/* ── Desktop Table View (hidden below lg) ── */}
+      <div className="hidden lg:block overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-xs">
         <table className="w-full border-collapse text-left text-sm">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50/75 text-xs font-semibold uppercase tracking-wider text-gray-500">
@@ -211,9 +212,9 @@ export default function CategoryTable({
                   <td className="px-4 py-3.5 text-center">
                     <div className="flex items-center justify-center gap-2">
                       <VisibilityToggle
-                        id={cat.id}
-                        initialVisibility={cat.visibility}
-                        disabled={isDeleted}
+                         id={cat.id}
+                         initialVisibility={cat.visibility}
+                         disabled={isDeleted}
                       />
                     </div>
                   </td>
@@ -295,6 +296,146 @@ export default function CategoryTable({
             })}
           </tbody>
         </table>
+      </div>
+
+      {/* ── Mobile & Tablet Card View (visible below lg) ── */}
+      <div className="block lg:hidden space-y-4">
+        {/* Mobile Header: Select All */}
+        {localCategories.length > 0 && (
+          <div className="flex items-center gap-2 px-1">
+            <input
+              type="checkbox"
+              id="selectAllMobile"
+              checked={allSelected}
+              onChange={(e) => onSelectAll(e.target.checked)}
+              className="rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer h-5 w-5"
+            />
+            <label htmlFor="selectAllMobile" className="text-sm font-medium text-gray-700">
+              Select All
+            </label>
+          </div>
+        )}
+
+        {localCategories.map((cat, idx) => {
+          const isSelected = selectedIds.includes(cat.id);
+          const isDeleted = Boolean(cat.deleted_at);
+
+          return (
+            <div
+              key={cat.id}
+              className={`rounded-xl border border-gray-200 bg-white p-4 shadow-xs transition-shadow ${
+                isSelected ? "border-amber-300 bg-amber-50/20" : ""
+              } ${isDeleted ? "bg-red-50/10 border-red-200" : "hover:shadow-md"}`}
+            >
+              {/* Card Header: Drag Handle, Checkbox, Image & Details */}
+              <div className="flex items-start gap-3">
+                <div className="flex flex-col items-center gap-3 pt-1">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => onToggleSelect(cat.id)}
+                    className="rounded border-gray-300 text-gray-900 focus:ring-gray-900 cursor-pointer h-5 w-5"
+                  />
+                  <ReorderHandle
+                    disabled={isDeleted || isReordering}
+                    onDragStart={(e) => handleDragStart(e, idx)}
+                  />
+                </div>
+
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center">
+                  {cat.thumbnail_url ? (
+                    <img
+                      src={cat.thumbnail_url}
+                      alt={cat.alt_text || cat.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <span className="material-symbols-outlined text-gray-400 text-2xl">
+                      category
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-semibold text-gray-900 text-base truncate">
+                      {cat.name}
+                    </h3>
+                    {isDeleted && <CategoryStatusBadge type="deleted" />}
+                  </div>
+                  <p className="text-xs text-gray-500 font-mono mt-1 mb-1 truncate">/{cat.slug}</p>
+                  
+                  <div className="flex flex-wrap gap-2 mt-2">
+                     <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-bold text-gray-800 border border-gray-200">
+                      {cat.totalProducts} Products
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Toggles Container */}
+              <div className="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-x-6 gap-y-3">
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-semibold text-gray-500 uppercase">Visibility</span>
+                  <VisibilityToggle
+                    id={cat.id}
+                    initialVisibility={cat.visibility}
+                    disabled={isDeleted}
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-semibold text-gray-500 uppercase">Featured</span>
+                  <FeaturedToggle
+                    id={cat.id}
+                    initialFeatured={cat.is_featured}
+                    disabled={isDeleted}
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <span className="text-xs font-semibold text-gray-500 uppercase">Order</span>
+                  <span className="font-mono text-sm font-semibold text-gray-700">{cat.sort_order}</span>
+                </div>
+              </div>
+
+              {/* Quick Actions Footer */}
+              <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-end gap-2">
+                {!isDeleted ? (
+                  <>
+                    <Link
+                      href={`/admin/categories/${cat.id}/edit`}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors font-semibold text-xs min-h-[38px]"
+                    >
+                      <span className="material-symbols-outlined text-base mr-1">edit</span>
+                      Edit
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (cat.totalProducts > 0) {
+                          setTransferModalCat(cat);
+                        } else {
+                          setDeleteModalCat(cat);
+                        }
+                      }}
+                      className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors font-semibold text-xs min-h-[38px]"
+                    >
+                      <span className="material-symbols-outlined text-base mr-1">delete</span>
+                      Delete
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => handleRestore(cat.id)}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-blue-50 px-4 py-2 text-xs font-semibold text-blue-700 border border-blue-200 hover:bg-blue-100 transition-colors min-h-[38px]"
+                  >
+                    Restore
+                  </button>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Delete Modal for 0 products */}

@@ -105,11 +105,11 @@ export default function CheckoutPage() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-7 xl:col-span-8">
+          <div className="order-2 lg:order-1 lg:col-span-7 xl:col-span-8">
             <CheckoutForm onSubmit={handleSubmitOrder} isSubmitting={isSubmitting} />
           </div>
 
-          <div className="lg:col-span-5 xl:col-span-4">
+          <div className="order-1 lg:order-2 lg:col-span-5 xl:col-span-4">
             <div className="lg:sticky lg:top-28">
               <CartSummary />
             </div>

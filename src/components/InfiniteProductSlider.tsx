@@ -117,7 +117,7 @@ export function InfiniteSlider({
   return (
     <div className={cn("overflow-hidden w-full", className)}>
       <motion.div
-        className="flex w-max"
+        className="flex flex-nowrap w-max"
         style={{
           ...(direction === "horizontal"
             ? { x: translation }
@@ -146,9 +146,9 @@ export default function InfiniteProductSlider({ productsList, addItem }: Infinit
       gap={24}
       duration={35}
       durationOnHover={150} // Slower speed on hover for easier card clicks
-      className="py-6 overflow-visible"
+      className="py-6"
     >
-      {productsList.map((product) => (
+      {productsList.slice(0, 15).map((product) => (
         <ProductRevealCard
           key={product.slug}
           product={product}

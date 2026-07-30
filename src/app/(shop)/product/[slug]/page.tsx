@@ -261,7 +261,7 @@ export default function ProductDetailPage({ params }: Props) {
 
           {/* Key Benefits Grid */}
           <div
-            className="grid grid-cols-2 gap-3 mb-6 py-5"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6 py-5"
             style={{
               borderTop: "1px solid #c8c7b5",
               borderBottom: "1px solid #c8c7b5",
@@ -711,7 +711,7 @@ export default function ProductDetailPage({ params }: Props) {
             >
               The Ritual
             </h2>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {product.ritual.map((r) => (
                 <div
                   key={r.step}

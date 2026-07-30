@@ -43,7 +43,7 @@ export default async function ContactPage() {
             </div>
 
             {/* Right Column: Inspiration-Style Contact Details Card */}
-            <div className="md:col-span-5 flex justify-end w-full">
+            <div className="md:col-span-5 flex justify-center md:justify-end w-full">
               <div
                 className="w-full max-w-[380px] rounded-[24px] overflow-hidden bg-white flex flex-col"
                 style={{
