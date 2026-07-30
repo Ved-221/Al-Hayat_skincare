@@ -77,15 +77,15 @@ export function ProductRevealCard({
     },
     hover: shouldAnimate
       ? {
-          scale: 1.02,
-          y: -6,
-          transition: {
-            type: "spring",
-            stiffness: 300,
-            damping: 25,
-            mass: 0.8,
-          },
-        }
+        scale: 1.02,
+        y: -6,
+        transition: {
+          type: "spring",
+          stiffness: 300,
+          damping: 25,
+          mass: 0.8,
+        },
+      }
       : {},
   };
 
@@ -133,14 +133,14 @@ export function ProductRevealCard({
     rest: { scale: 1, y: 0 },
     hover: shouldAnimate
       ? {
-          scale: 1.02,
-          y: -1,
-          transition: {
-            type: "spring",
-            stiffness: 400,
-            damping: 25,
-          },
-        }
+        scale: 1.02,
+        y: -1,
+        transition: {
+          type: "spring",
+          stiffness: 400,
+          damping: 25,
+        },
+      }
       : {},
     tap: shouldAnimate ? { scale: 0.98 } : {},
   };
@@ -194,11 +194,10 @@ export function ProductRevealCard({
                 onClick={handleFavorite}
                 variants={favoriteVariants}
                 animate={isFavorite ? "favorite" : "rest"}
-                className={`absolute top-3 right-3 z-10 w-10 h-10 rounded-full border border-gray-200/30 shadow-xs transition-colors flex items-center justify-center group ${
-                  isFavorite
+                className={`absolute top-3 right-3 z-10 w-10 h-10 rounded-full border border-gray-200/30 shadow-xs transition-colors flex items-center justify-center group ${isFavorite
                     ? "bg-red-500 text-white"
                     : "bg-white/90 text-[#787868] hover:text-[#b22a2b] hover:border-[#b22a2b]"
-                }`}
+                  }`}
               >
                 <Heart
                   className={`w-4 h-4 transition-colors ${isFavorite ? "fill-current" : "fill-none group-hover:fill-current"}`}
@@ -260,7 +259,7 @@ export function ProductRevealCard({
               </p>
             </div>
 
-            {/* Price & Action Row */}
+            {/* Price & Action Row (Clean price view before hover reveal) */}
             <div className="pt-3 flex items-center justify-between gap-2 mt-auto border-t border-gray-100/80">
               <div className="flex items-center gap-1.5">
                 <span
@@ -280,25 +279,6 @@ export function ProductRevealCard({
                     </span>
                   )}
               </div>
-
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-white hover:bg-[#343a01] active:scale-95 transition-all shadow-xs text-[11px] font-bold tracking-wider cursor-pointer border-none z-10"
-                style={{ background: "#434b01", fontFamily: "'Inter', sans-serif" }}
-              >
-                {isAdded ? (
-                  <>
-                    <Check className="w-3.5 h-3.5" />
-                    ADDED ✓
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="w-3.5 h-3.5" />
-                    ADD TO CART
-                  </>
-                )}
-              </button>
             </div>
           </div>
         </div>
@@ -397,17 +377,17 @@ export function ProductRevealCard({
               className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-white hover:opacity-95 transition-opacity shadow-xs text-xs font-bold tracking-wider cursor-pointer border-none"
               style={{ background: "#434b01" }}
             >
-                {isAdded ? (
-                  <>
-                    <Check className="w-3.5 h-3.5" />
-                    ADDED ✓
-                  </>
-                ) : (
-                  <>
-                    <ShoppingCart className="w-3.5 h-3.5" />
-                    ADD TO CART
-                  </>
-                )}
+              {isAdded ? (
+                <>
+                  <Check className="w-3.5 h-3.5" />
+                  ADDED ✓
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  ADD TO CART
+                </>
+              )}
             </motion.button>
 
             {/* View Details Link + Wishlist Heart button */}
@@ -427,11 +407,10 @@ export function ProductRevealCard({
                 onClick={handleFavorite}
                 variants={favoriteVariants}
                 animate={isFavorite ? "favorite" : "rest"}
-                className={`w-9 h-9 rounded-full border shadow-xs transition-colors flex items-center justify-center cursor-pointer group ${
-                  isFavorite
+                className={`w-9 h-9 rounded-full border shadow-xs transition-colors flex items-center justify-center cursor-pointer group ${isFavorite
                     ? "bg-red-500 text-white border-red-500"
                     : "bg-white text-[#787868] hover:text-[#b22a2b] border-gray-200/60"
-                }`}
+                  }`}
               >
                 <Heart
                   className={`w-4 h-4 transition-colors ${isFavorite ? "fill-current" : "fill-none group-hover:fill-current"}`}

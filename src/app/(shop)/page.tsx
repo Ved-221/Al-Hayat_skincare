@@ -15,7 +15,7 @@ if (typeof window !== "undefined") {
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
-const SCROLL_DISTANCE = 1575;
+const SCROLL_DISTANCE = 3500;
 
 const WHATSAPP_NUMBER = "919876543210";
 
@@ -237,7 +237,22 @@ export default function Home() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [productsList, setProductsList] = useState(PRODUCTS);
+  const [isMobile, setIsMobile] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
+
+  // Detect screen size for mobile responsive video source
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  const videoSrc = isMobile
+    ? "/keep_everything_in_this_video_gwr_video_mvp.mp4"
+    : "/hero_video.mp4";
 
   // Intro animation state variables
   const [introPlaying, setIntroPlaying] = useState(false);
@@ -382,23 +397,52 @@ export default function Home() {
         video.removeEventListener("canplay", onCanPlay);
       };
     }
+  }, [videoSrc]);
+
+  const targetTimeRef = useRef<number>(0);
+
+  // Dedicated requestAnimationFrame loop for smooth video seeking without queue overflow
+  useEffect(() => {
+    let animId: number;
+    const updateFrame = () => {
+      const video = videoRef.current;
+      if (video && !video.seeking) {
+        const target = targetTimeRef.current;
+        const diff = Math.abs(video.currentTime - target);
+        if (diff > 0.02) {
+          try {
+            video.currentTime = target;
+          } catch {
+            // Ignore temporary seek errors before load
+          }
+        }
+      }
+      animId = requestAnimationFrame(updateFrame);
+    };
+    animId = requestAnimationFrame(updateFrame);
+    return () => cancelAnimationFrame(animId);
   }, []);
 
   // Initialize GSAP ScrollTrigger
   useEffect(() => {
     if (!isLoaded || introPlaying) return;
 
-    ScrollTrigger.normalizeScroll(true);
+    // Only normalize scroll on desktop/non-touch to prevent jitter on mobile devices
+    if (typeof window !== "undefined" && !("ontouchstart" in window)) {
+      ScrollTrigger.normalizeScroll(true);
+    } else {
+      ScrollTrigger.normalizeScroll(false);
+    }
 
     const video = videoRef.current;
     const container = containerRef.current;
     if (!video || !container) return;
 
-    // Reduced motion accessibility fallback: Skip ScrollTrigger scrub/pin and show last frame
+    // Reduced motion accessibility fallback: Skip ScrollTrigger scrub/pin and show frame
     if (reducedMotion) {
       const setLastFrame = () => {
         if (!isNaN(video.duration) && video.duration > 0) {
-          video.currentTime = video.duration;
+          video.currentTime = isMobile ? 0 : video.duration;
         }
       };
       if (video.readyState >= 1) {
@@ -415,23 +459,31 @@ export default function Home() {
         const duration = video.duration;
         if (isNaN(duration) || duration === 0) return;
 
-        // Force currentTime to be 0 at start
-        video.currentTime = 0;
+        // Mobile: Reverse video scroll animation (start at duration, scrub to 0)
+        // Desktop: Forward video scroll animation (start at 0, scrub to duration)
+        const startVal = 0;
+        const targetVal = duration;
 
-        const proxy = { currentTime: 0 };
+        video.currentTime = startVal;
+        targetTimeRef.current = startVal;
+        const proxy = { currentTime: startVal };
+
+        const scrollDist = isMobile ? 2200 : 3500;
 
         gsap.to(proxy, {
-          currentTime: duration,
+          currentTime: targetVal,
           ease: "none",
           scrollTrigger: {
             trigger: container,
             start: "top top",
-            end: () => `+=${SCROLL_DISTANCE}`,
+            end: () => `+=${scrollDist}`,
             pin: true,
-            scrub: 0.5,
+            scrub: isMobile ? 0.8 : 1.2,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
-              video.currentTime = proxy.currentTime;
+              if (!isNaN(proxy.currentTime)) {
+                targetTimeRef.current = proxy.currentTime;
+              }
 
               if (progressFillRef.current) {
                 progressFillRef.current.style.width = `${self.progress * 100}%`;
@@ -463,7 +515,7 @@ export default function Home() {
     return () => {
       ctx.revert();
     };
-  }, [isLoaded, introPlaying, reducedMotion]);
+  }, [isLoaded, introPlaying, reducedMotion, isMobile, videoSrc]);
 
   // Fallback scroll listener for scroll hint when reduced motion is active
   useEffect(() => {
@@ -570,11 +622,12 @@ export default function Home() {
       <div ref={containerRef} className="video-container-cropped z-10">
         <video
           ref={videoRef}
+          key={videoSrc}
           id="hero-video"
           muted
           playsInline
           preload="metadata"
-          src="/hero_video.mp4"
+          src={videoSrc}
           className="video-element-cropped"
         />
       </div>

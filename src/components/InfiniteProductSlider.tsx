@@ -44,7 +44,7 @@ interface InfiniteSliderProps {
 export function InfiniteSlider({
   children,
   gap = 20,
-  duration = 35,
+  duration = 45,
   durationOnHover = 120, // Slows down significantly when touched/hovered for easy interaction
   direction = "horizontal",
   reverse = false,
@@ -151,20 +151,38 @@ interface InfiniteProductSliderProps {
 
 export default function InfiniteProductSlider({ productsList, addItem }: InfiniteProductSliderProps) {
   return (
-    <InfiniteSlider
-      gap={24}
-      duration={35}
-      durationOnHover={150} // Slower speed on hover/touch for easier card clicks
-      className="py-4"
-    >
-      {productsList.map((product) => (
-        <ProductRevealCard
-          key={product.slug}
-          product={product}
-          enableHoverOverlay={false}
-          className="w-[270px] sm:w-[300px] md:w-[340px] flex-shrink-0"
-        />
-      ))}
-    </InfiniteSlider>
+    <>
+      {/* Mobile view: Standard native horizontal scroll without infinite loop animation */}
+      <div className="md:hidden w-full overflow-x-auto pb-4 pt-2 px-4 scrollbar-none no-scrollbar snap-x snap-mandatory flex gap-4">
+        {productsList.map((product) => (
+          <div key={product.slug} className="snap-start flex-shrink-0">
+            <ProductRevealCard
+              product={product}
+              enableHoverOverlay={false}
+              className="w-[270px] flex-shrink-0"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop view: Infinite scrolling product slider */}
+      <div className="hidden md:block w-full">
+        <InfiniteSlider
+          gap={24}
+          duration={35}
+          durationOnHover={150} // Slower speed on hover/touch for easier card clicks
+          className="py-4"
+        >
+          {productsList.map((product) => (
+            <ProductRevealCard
+              key={product.slug}
+              product={product}
+              enableHoverOverlay={false}
+              className="w-[270px] sm:w-[300px] md:w-[340px] flex-shrink-0"
+            />
+          ))}
+        </InfiniteSlider>
+      </div>
+    </>
   );
 }
