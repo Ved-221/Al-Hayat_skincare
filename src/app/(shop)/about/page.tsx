@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "About Us | AL-HAYAT by Dr. Farheen",
@@ -27,10 +28,12 @@ export default function AboutPage() {
         style={{ minHeight: "560px", background: "#EAE2D1" }}
       >
         <div className="absolute inset-0">
-          <img
+          <Image
             src="https://lh3.googleusercontent.com/aida-public/AB6AXuC663Sc3KM_zaIw8CqAE6KJJUKmurCW5lKL6RENlj7i1zaOHZWOwaQ_IFHCwQSGBCIX3RXa099VHx4tFW05po9CkKm_Vnn5QW-3PcCom4zkjtSCX_PS_DTs1pQ1xhzQ23slmSppvyZ7jMAAkC5u-3jYoCflo6Yrac2ZLiWVH8ZU_qEfa554t5h4W7ExszJmplzuFcIkjfRJhukL8zhpag3WSGpdyygkCJMA4PgF1ePHmqeHfrTG-VgmN3uvZkYfNUx1Qq40273S0N2e"
             alt="Botanical background"
-            className="w-full h-full object-cover opacity-45 mix-blend-multiply"
+            fill
+            className="object-cover opacity-45 mix-blend-multiply"
+            priority
           />
         </div>
 
@@ -81,10 +84,12 @@ export default function AboutPage() {
               background: "#EAE2D1",
             }}
           >
-            <img
+            <Image
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY2BnJHnzCfRJXoWJ2rtCA7txuuZX1O_l4t0BpRReEF-nX-BEu5lqqVqkxI3-JPjVJhxncAKv2PZSTMNSZftBkEB29WelPnuKsF702hYnctkTfqCM1b2HwQMA-NhqgmJ0cF8jkZsOFKJOcT3vPVEv83X1y1EU6bKe4hqsgkHbP0swhEIbGsmSFL4WMVfuhLmyoCJjBkKtymEq59uqTLPPr82Hgi_64YbRv_jzUs7I25OnNygqT3rssgpJw7f_ZLP3KyzP9NfKF6cOk"
               alt="AL-HAYAT Heritage"
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+              fill
+              className="object-cover hover:scale-105 transition-transform duration-700"
+              sizes="(max-width: 768px) 100vw, 360px"
             />
           </div>
 
@@ -200,8 +205,8 @@ export default function AboutPage() {
                 className="bg-white rounded-xl p-6 flex flex-col items-center text-center hover:-translate-y-1 transition-transform duration-300"
                 style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.06)" }}
               >
-                <div className="w-28 h-28 rounded-full overflow-hidden mb-5 border-4 border-[#EAE2D1] bg-[#faf3ea]">
-                  <img src={ing.img} alt={ing.name} className="w-full h-full object-contain p-2 hover:scale-110 transition-transform duration-500" />
+                <div className="relative w-28 h-28 rounded-full overflow-hidden mb-5 border-4 border-[#EAE2D1] bg-[#faf3ea]">
+                  <Image src={ing.img} alt={ing.name} fill className="object-contain p-2 hover:scale-110 transition-transform duration-500" sizes="112px" />
                 </div>
                 <h4 style={{ fontFamily: "'Playfair Display', serif", fontSize: "20px", fontWeight: 600, color: "#434b01", marginBottom: "8px" }}>
                   {ing.name}

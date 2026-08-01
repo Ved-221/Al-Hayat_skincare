@@ -37,6 +37,7 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
     const folder = (formData.get("folder") as string) || "products";
+    const oldUrl = formData.get("oldUrl") as string | null;
 
     if (!file) {
       return NextResponse.json({ error: "No image file provided." }, { status: 400 });
@@ -84,10 +85,26 @@ export async function POST(req: NextRequest) {
       const { data: publicUrlData } = supabase.storage
         .from(bucketName)
         .getPublicUrl(filename);
+      
+      if (oldUrl) {
+        const oldFilename = oldUrl.split("/").pop();
+        if (oldFilename) {
+          // Fire and forget delete - don't fail upload if delete fails
+          supabase.storage.from(bucketName).remove([oldFilename]).catch(e => console.error("Failed to delete old file:", e));
+        }
+      }
+
       return NextResponse.json({ success: true, url: publicUrlData.publicUrl });
     }
 
     // 7. Fallback: Save to Local Workspace `public/` directory (during development/local testing)
+    if (process.env.NODE_ENV === 'production') {
+      return NextResponse.json(
+        { success: false, error: `Storage upload failed: ${storageError?.message || "Unknown error"}` },
+        { status: 500 }
+      );
+    }
+
     const publicFolder = folder === "settings" ? "photos" : "products";
     const uploadDir = path.join(process.cwd(), "public", publicFolder);
 
@@ -97,6 +114,15 @@ export async function POST(req: NextRequest) {
       await fs.writeFile(localPath, buffer);
 
       const urlPath = `/${publicFolder}/${filename}`;
+      
+      if (oldUrl) {
+        const oldFilename = oldUrl.split("/").pop();
+        if (oldFilename) {
+          const localOldPath = path.join(uploadDir, oldFilename);
+          fs.unlink(localOldPath).catch(() => {});
+        }
+      }
+
       return NextResponse.json({
         success: true,
         url: urlPath,
@@ -117,5 +143,38 @@ export async function POST(req: NextRequest) {
       { error: err.message || "An unexpected error occurred during image upload." },
       { status: 500 }
     );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const { data: admin } = await supabase.from("admins").select("id").eq("id", user.id).single();
+    if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    const body = await req.json();
+    const { url, folder } = body;
+    if (!url) return NextResponse.json({ error: "No URL provided" }, { status: 400 });
+
+    const filename = url.split("/").pop();
+    if (!filename) return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+
+    const bucketName = folder === "settings" ? "media" : "products";
+
+    if (url.includes("supabase.co") || url.includes("supabase.in")) {
+      const { error } = await supabase.storage.from(bucketName).remove([filename]);
+      if (error) console.error("Storage delete error:", error);
+    } else if (process.env.NODE_ENV !== "production") {
+      const publicFolder = folder === "settings" ? "photos" : "products";
+      const localPath = path.join(process.cwd(), "public", publicFolder, filename);
+      await fs.unlink(localPath).catch(() => {});
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@
 import { useCartStore } from "@/store/cartStore";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getSubtotal, getTotalItems } = useCartStore();
@@ -53,8 +54,8 @@ export default function CartPage() {
                       
                       {/* Product details */}
                       <div className="col-span-1 md:col-span-6 flex gap-4 items-center">
-                        <div className="w-24 h-24 rounded bg-[#faf3ea] overflow-hidden flex-shrink-0">
-                          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                        <div className="w-24 h-24 rounded bg-[#faf3ea] overflow-hidden flex-shrink-0 relative">
+                          <Image src={item.image} alt={item.name} fill className="object-cover" sizes="96px" />
                         </div>
                         <div>
                           <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "10px", fontWeight: 600, color: "#b22a2b", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>

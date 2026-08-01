@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
 import CartDrawer from "./CartDrawer";
 import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 import { useCartStore } from "@/store/cartStore";
@@ -91,9 +92,11 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
               className="flex items-center gap-2.5 mr-2 group"
               style={{ textDecoration: "none" }}
             >
-              <img
+              <Image
                 src={logoUrl}
                 alt={storeName}
+                width={140}
+                height={36}
                 className="h-9 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
               />
             </Link>
@@ -153,21 +156,29 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
           </div>
 
           {/* ─── Mobile Hamburger ─── */}
-          <button
-            className="md:hidden p-2 text-[#434b01]"
-            onClick={() => setMobileOpen(true)}
-            aria-label="Open menu"
-          >
-            <span className="material-symbols-outlined" style={{ fontSize: "26px" }}>menu</span>
-          </button>
+          <div className="md:hidden flex-1 flex items-center justify-start">
+            <button
+              className="p-2 -ml-2 text-[#434b01]"
+              onClick={() => setMobileOpen(true)}
+              aria-label="Open menu"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "26px" }}>menu</span>
+            </button>
+          </div>
 
           {/* ─── Mobile Center Logo ─── */}
           <Link
             href="/"
-            className="md:hidden flex items-center justify-center flex-1"
+            className="md:hidden shrink-0 flex items-center justify-center"
             style={{ textDecoration: "none" }}
           >
-            <img src={logoUrl} alt={storeName} className="h-8 object-contain max-w-[140px]" />
+            <Image 
+              src={logoUrl} 
+              alt={storeName} 
+              width={160} 
+              height={40} 
+              className="h-8 sm:h-9 w-auto object-contain" 
+            />
           </Link>
 
           {/* ─── Right: WhatsApp CTA + Search ─── */}
@@ -226,7 +237,7 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
           </div>
 
           {/* Mobile right side — WhatsApp icon & Cart */}
-          <div className="md:hidden flex items-center gap-2 flex-1 justify-end">
+          <div className="md:hidden flex-1 flex items-center gap-1 sm:gap-2 justify-end -mr-2">
             {/* Wishlist Link */}
             <Link
               href="/wishlist"

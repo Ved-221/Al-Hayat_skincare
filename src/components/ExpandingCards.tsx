@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { cn } from "@/lib/utils";
+import { cn, resolveImageUrl } from "@/lib/utils";
 
 export interface CardItem {
   id: string | number;
@@ -100,7 +100,7 @@ export const ExpandingCards = React.forwardRef<
             >
               {/* Background image */}
               <img
-                src={item.imgSrc}
+                src={resolveImageUrl(item.imgSrc)}
                 alt={item.title}
                 className={cn(
                   "absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out pointer-events-none select-none",
@@ -207,7 +207,7 @@ function ExpandingCardItem({
     >
       {/* Cover image */}
       <img
-        src={item.imgSrc}
+        src={resolveImageUrl(item.imgSrc)}
         alt={item.title}
         className={cn(
           "absolute inset-0 h-full w-full object-cover transition-all duration-700 ease-out pointer-events-none select-none",

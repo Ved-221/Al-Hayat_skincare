@@ -164,7 +164,7 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
 
       {/* Unsaved changes alert bar */}
       {isDirty && (
-        <div className="sticky top-20 z-30 flex items-center justify-between gap-4 rounded-xl border border-amber-300 bg-amber-50 px-5 py-3.5 text-amber-900 shadow-md transition-all">
+        <div className="sticky top-[72px] sm:top-20 z-[45] flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-amber-300 bg-amber-50 px-5 py-3.5 text-amber-900 shadow-md transition-all">
           <div className="flex items-center gap-2.5">
             <span className="material-symbols-outlined text-amber-600 animate-pulse">
               edit_note
@@ -662,7 +662,7 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
       </SettingsSection>
 
       {/* Sticky Action Footer */}
-      <div className="sticky bottom-0 z-20 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur-md">
+      <div className="sticky bottom-0 sm:bottom-6 z-[45] flex flex-col sm:flex-row items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white/95 p-4 shadow-lg backdrop-blur-md mt-8">
         <div className="flex items-center gap-2">
           {isDirty ? (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 border border-amber-200">

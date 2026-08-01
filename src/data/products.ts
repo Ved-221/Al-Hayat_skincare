@@ -21,7 +21,7 @@ export interface Product {
   ritual: { icon: string; step: string; desc: string }[];
 }
 
-export const PRODUCTS: Product[] = [
+const STATIC_PRODUCTS: Product[] = [
   {
     name: "Herbal Hair Oil",
     category: "Hair Care",
@@ -395,3 +395,13 @@ export const PRODUCTS: Product[] = [
     ]
   }
 ];
+
+// Map all relative paths to the absolute Supabase site-assets URL
+const supabaseBaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://zhdqcobqpzbpheusckym.supabase.co";
+
+export const PRODUCTS: Product[] = STATIC_PRODUCTS.map(p => ({
+  ...p,
+  img: p.img.startsWith("http") 
+    ? p.img 
+    : `${supabaseBaseUrl}/storage/v1/object/public/site-assets${p.img.replace(".png", ".webp")}`
+}));

@@ -110,7 +110,7 @@ export default function StatusSelector({
                 Informational Warning: Storefront in Maintenance Mode
               </p>
               <p className="text-amber-800 leading-relaxed">
-                When set to Maintenance, the storefront will display a maintenance notice to visiting customers once the maintenance page is implemented. Admin access and dashboard operations remain fully functional.
+                When set to Maintenance, the storefront will display a maintenance notice to visiting customers. Admin access and dashboard operations remain fully functional, and you can still preview the storefront.
               </p>
             </div>
           </div>

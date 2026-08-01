@@ -2,7 +2,8 @@
 
 import { useCartStore } from "@/store/cartStore";
 import { useEffect, useState } from "react";
-
+import Image from "next/image";
+import { resolveImageUrl } from "@/lib/utils";
 export default function CartSummary() {
   const { items, getSubtotal, getGrandTotal, getTotalItems } = useCartStore();
   const [mounted, setMounted] = useState(false);
@@ -24,7 +25,7 @@ export default function CartSummary() {
         {items.map((item) => (
           <div key={item.productId} className="flex gap-4">
             <div className="w-16 h-16 rounded bg-[#faf3ea] overflow-hidden flex-shrink-0 relative border border-[#EAE2D1]">
-              <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+              <Image src={resolveImageUrl(item.image)} alt={item.name} fill className="object-cover" sizes="64px" />
               <div className="absolute -top-2 -right-2 bg-[#434b01] text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full">
                 {item.quantity}
               </div>

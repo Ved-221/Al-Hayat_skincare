@@ -1,0 +1,33 @@
+-- Create the "media" storage bucket
+insert into storage.buckets (id, name, public)
+values ('media', 'media', true)
+on conflict (id) do nothing;
+
+-- Allow public read access to all files in the "media" bucket
+create policy "Public read access on media"
+  on storage.objects for select
+  using (bucket_id = 'media');
+
+-- Only authenticated admins can upload files
+create policy "Admin write access on media"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'media'
+    and exists (select 1 from public.admins where admins.id = auth.uid())
+  );
+
+-- Only authenticated admins can update files
+create policy "Admin update access on media"
+  on storage.objects for update
+  using (
+    bucket_id = 'media'
+    and exists (select 1 from public.admins where admins.id = auth.uid())
+  );
+
+-- Only authenticated admins can delete files
+create policy "Admin delete access on media"
+  on storage.objects for delete
+  using (
+    bucket_id = 'media'
+    and exists (select 1 from public.admins where admins.id = auth.uid())
+  );

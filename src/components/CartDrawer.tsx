@@ -3,7 +3,8 @@
 import { useCartStore } from "@/store/cartStore";
 import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
 import Link from "next/link";
-
+import Image from "next/image";
+import { resolveImageUrl } from "@/lib/utils";
 interface CartDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -59,8 +60,8 @@ export default function CartDrawer({ isOpen, onClose }: CartDrawerProps) {
             <div className="flex flex-col gap-6">
               {items.map((item) => (
                 <div key={item.productId} className="flex gap-4">
-                  <div className="w-20 h-20 rounded bg-[#faf3ea] overflow-hidden flex-shrink-0">
-                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  <div className="w-20 h-20 rounded bg-[#faf3ea] overflow-hidden flex-shrink-0 relative">
+                    <Image src={resolveImageUrl(item.image)} alt={item.name} fill className="object-cover" sizes="80px" />
                   </div>
                   <div className="flex-1 flex flex-col justify-between">
                     <div className="flex justify-between items-start">

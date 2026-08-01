@@ -16,7 +16,11 @@ export function mapDbProduct(dbProduct: any): Product {
     badge: dbProduct.badge || null,
     ingredients: dbProduct.ingredients || [],
     benefit: dbProduct.benefit || "",
-    img: dbProduct.img ? `${dbProduct.img}?v=2` : "",
+    img: dbProduct.img 
+      ? dbProduct.img.startsWith("http") 
+        ? dbProduct.img
+        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/site-assets${dbProduct.img.replace(".png", ".webp")}`
+      : "",
     slug: dbProduct.slug || "",
     suitableFor: dbProduct.suitable_for || dbProduct.suitableFor || "",
     tagline: dbProduct.tagline || "",

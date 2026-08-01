@@ -50,6 +50,9 @@ export default function ImageUploader({
       const formData = new FormData();
       formData.append("file", file);
       formData.append("folder", folder);
+      if (currentUrl) {
+        formData.append("oldUrl", currentUrl);
+      }
 
       const response = await fetch("/api/admin/upload", {
         method: "POST",
@@ -95,7 +98,16 @@ export default function ImageUploader({
     }
   };
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
+    if (currentUrl) {
+      // Fire and forget delete so it doesn't block the UI
+      fetch("/api/admin/upload", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: currentUrl, folder }),
+      }).catch(err => console.error("Failed to delete file on remove:", err));
+    }
+    
     setCurrentUrl("");
     if (onChange) onChange("");
     if (fileInputRef.current) fileInputRef.current.value = "";

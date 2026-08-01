@@ -239,6 +239,7 @@ export default function Home() {
   const [productsList, setProductsList] = useState(PRODUCTS);
   const [isMobile, setIsMobile] = useState(false);
   const addItem = useCartStore((state) => state.addItem);
+  const [mediaMap, setMediaMap] = useState<Record<string, string>>({});
 
   // Detect screen size for mobile responsive video source
   useEffect(() => {
@@ -251,8 +252,8 @@ export default function Home() {
   }, []);
 
   const videoSrc = isMobile
-    ? "/keep_everything_in_this_video_gwr_video_mvp.mp4"
-    : "/hero_video.mp4";
+    ? mediaMap["hero/keep_everything_in_this_video_gwr_video_mvp.mp4"] || "/hero_video_fallback.mp4"
+    : mediaMap["hero/hero_video.mp4"] || "/hero_video_fallback.mp4";
 
   // Intro animation state variables
   const [introPlaying, setIntroPlaying] = useState(false);
@@ -283,13 +284,19 @@ export default function Home() {
     return () => mediaQuery.removeEventListener("change", listener);
   }, []);
 
-  // Load products from Supabase dynamically on mount
+  // Load products and media from Supabase dynamically on mount
   useEffect(() => {
     import("@/services/productService").then((mod) => {
       mod.getProducts().then((data) => {
         if (data && data.length > 0) {
           setProductsList(data);
         }
+      });
+    });
+
+    import("@/services/siteMediaService").then((mod) => {
+      mod.getSiteMedia().then((data) => {
+        setMediaMap(data);
       });
     });
   }, []);
@@ -605,7 +612,7 @@ export default function Home() {
             }`}
           >
             <img
-              src="/logo_withoutbg.png"
+              src={mediaMap["branding/logo_withoutbg.webp"] || "/logo_withoutbg.png"}
               alt="AL-HAYAT Logo"
               style={{
                 width: "clamp(200px, 35vw, 320px)",
@@ -628,6 +635,7 @@ export default function Home() {
           playsInline
           preload="metadata"
           src={videoSrc}
+          poster="/hero_video_fallback.jpg"
           className="video-element-cropped"
         />
       </div>
@@ -720,15 +728,19 @@ export default function Home() {
             {/* Ingredient Expanding Cards */}
             <ExpandingCards
               className="mx-auto mt-8"
-              items={INGREDIENTS.map((ing, index) => ({
-                id: index,
-                title: ing.name,
-                description: ing.desc,
-                imgSrc: ing.image,
-                emoji: ing.emoji,
-                benefit: ing.benefit,
-                color: ing.color
-              }))}
+              items={INGREDIENTS.map((ing, index) => {
+                const fileName = ing.image.split('/').pop()?.replace('.png', '.webp');
+                const mediaKey = `ingredients/${fileName}`;
+                return {
+                  id: index,
+                  title: ing.name,
+                  description: ing.desc,
+                  imgSrc: mediaMap[mediaKey] || ing.image,
+                  emoji: ing.emoji,
+                  benefit: ing.benefit,
+                  color: ing.color
+                };
+              })}
             />
 
             <div className="text-center mt-10">

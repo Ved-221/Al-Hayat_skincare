@@ -7,6 +7,7 @@ import { ShoppingCart, Heart, Check, X } from "lucide-react";
 import { type Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
+import { resolveImageUrl } from "@/lib/utils";
 
 interface ProductRevealCardProps {
   product: Product;
@@ -177,7 +178,7 @@ export function ProductRevealCard({
         <div className="relative overflow-hidden w-full aspect-square bg-[#faf3ea]">
           <Link href={`/product/${product.slug}`} className="block w-full h-full">
             <motion.img
-              src={product.img}
+              src={resolveImageUrl(product.img)}
               alt={product.name}
               className="w-full h-full object-contain p-4"
               variants={imageVariants}

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 const WHATSAPP_NUMBER = "919876543210";
 
-const INGREDIENTS = [
+const STATIC_INGREDIENTS = [
   {
     name: "Rose",
     slug: "rose",
@@ -186,6 +186,14 @@ const INGREDIENTS = [
     products: ["Watermelon Soap"],
   },
 ];
+
+const supabaseBaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://zhdqcobqpzbpheusckym.supabase.co";
+const INGREDIENTS = STATIC_INGREDIENTS.map(ing => ({
+  ...ing,
+  image: ing.image 
+    ? `${supabaseBaseUrl}/storage/v1/object/public/site-assets/ingredients/${ing.image.split('/').pop()?.replace('.png', '.webp')}`
+    : undefined
+}));
 
 const getProductSlug = (name: string) => {
   return name
