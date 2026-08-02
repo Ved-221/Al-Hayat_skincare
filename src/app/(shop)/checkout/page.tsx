@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import CartSummary from "@/components/checkout/CartSummary";
 import CheckoutForm, { type CheckoutFormValues } from "@/components/checkout/CheckoutForm";
 import { createOrderAction } from "@/app/admin/(protected)/orders/actions";
+import { type Order } from "@/types/order";
 import { getProducts } from "@/services/productService";
 
 export default function CheckoutPage() {
@@ -78,7 +79,7 @@ export default function CheckoutPage() {
         // Clear cart only on success
         clearCart();
         // Use router to redirect to success page
-        router.push(`/order-success?orderNumber=${(result.data as any)?.order_number}`);
+        router.push(`/order-success?orderNumber=${(result.data as Order)?.order_number}`);
       } else {
         setError(result.error || "Failed to create order. Please try again.");
       }

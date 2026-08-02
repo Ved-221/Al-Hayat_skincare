@@ -1,10 +1,10 @@
 # Al-Hayat Skincare
 
-An e-commerce storefront and admin dashboard for Al-Hayat Skincare, built with Next.js 15, Tailwind CSS, Zustand, and Supabase.
+An e-commerce storefront and admin dashboard for Al-Hayat Skincare, built with Next.js 16, Tailwind CSS, Zustand, and Supabase.
 
 ## Tech Stack
 
-- **Framework:** [Next.js 15](https://nextjs.org/) (App Router)
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **State Management:** [Zustand](https://github.com/pmndrs/zustand)
 - **Database & Auth & Storage:** [Supabase](https://supabase.com/)
