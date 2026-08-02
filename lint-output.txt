@@ -1,0 +1,340 @@
+﻿
+> website2@0.1.0 lint
+> eslint
+
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\scripts\seed.mjs
+  401:13  warning  'data' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\checkout\page.tsx
+  19:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\checkout\page.tsx:19:5
+  17 |
+  18 |   useEffect(() => {
+> 19 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  20 |     // If cart is empty on mount, redirect to cart page
+  21 |     if (useCartStore.getState().items.length === 0) {
+  22 |       router.push("/cart");  react-hooks/set-state-in-effect
+  28:46  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  84:19  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\order-success\actions.ts
+  40:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\order-success\page.tsx
+  20:7   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\order-success\page.tsx:20:7
+  18 |   useEffect(() => {
+  19 |     if (!orderNumber) {
+> 20 |       setLoading(false);
+     |       ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  21 |       return;
+  22 |     }
+  23 |  react-hooks/set-state-in-effect
+  62:11  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          react/no-unescaped-entities
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\page.tsx
+   9:26  warning  'CardItem' is defined but never used                  @typescript-eslint/no-unused-vars
+  19:7   warning  'SCROLL_DISTANCE' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\product\[slug]\page.tsx
+   41:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\product\[slug]\page.tsx:41:5
+  39 |
+  40 |   useEffect(() => {
+> 41 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  42 |   }, []);
+  43 |
+  44 |   // Find product by slug initially from static list, then fetch updated from Supabase  react-hooks/set-state-in-effect
+  105:20  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react/no-unescaped-entities
+  105:43  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react/no-unescaped-entities
+  679:17  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react/no-unescaped-entities
+  681:44  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react/no-unescaped-entities
+  682:34  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           react/no-unescaped-entities
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\products\page.tsx
+  15:7  warning  'WHATSAPP_NUMBER' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       @typescript-eslint/no-unused-vars
+  36:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\products\page.tsx:36:5
+  34 |   // Sync state with URL params on navigation change
+  35 |   useEffect(() => {
+> 36 |     setActiveCategorySlug(searchParams.get("category") || "all");
+     |     ^^^^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  37 |     setSearchQuery(searchParams.get("search") || "");
+  38 |   }, [searchParams]);
+  39 |  react-hooks/set-state-in-effect
+  43:5  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\products\page.tsx:43:5
+  41 |   useEffect(() => {
+  42 |     let mounted = true;
+> 43 |     setLoadingData(true);
+     |     ^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  44 |
+  45 |     Promise.all([
+  46 |       getCategoriesWithProductCounts(),                                                                                                react-hooks/set-state-in-effect
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\wishlist\page.tsx
+  15:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\(shop)\wishlist\page.tsx:15:5
+  13 |   // Avoid hydration mismatch by waiting for client mount
+  14 |   useEffect(() => {
+> 15 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  16 |   }, []);
+  17 |
+  18 |   if (!mounted) {  react-hooks/set-state-in-effect
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\admin\(protected)\categories\[id]\edit\page.tsx
+  41:24  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  41:40  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\admin\(protected)\categories\actions.ts
+   30:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   58:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  146:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  163:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  175:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  192:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  213:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\admin\(protected)\orders\[id]\page.tsx
+   25:19  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  102:36  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                 @typescript-eslint/no-explicit-any
+  108:29  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\admin\(protected)\orders\actions.ts
+  12:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  30:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  84:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\admin\(protected)\orders\page.tsx
+  28:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\admin\(protected)\products\ProductForm.tsx
+  366:83  error  Unexpected any. Specify a different type                                                                                                                              @typescript-eslint/no-explicit-any
+  374:83  error  Unexpected any. Specify a different type                                                                                                                              @typescript-eslint/no-explicit-any
+  381:63  error  Unexpected any. Specify a different type                                                                                                                              @typescript-eslint/no-explicit-any
+  399:11  error  Do not use an `<a>` element to navigate to `/admin/products/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages  @next/next/no-html-link-for-pages
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\admin\(protected)\settings\actions.ts
+  46:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\api\admin\upload\route.ts
+  131:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  140:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  177:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\app\layout.tsx
+  59:9  warning  Custom fonts not added in `pages/_document.js` will only load for a single page. This is discouraged. See: https://nextjs.org/docs/messages/no-page-custom-font  @next/next/no-page-custom-font
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\BestSellersCarousel.tsx
+   8:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   9:22  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  12:61  warning  'addItem' is defined but never used       @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\HorizontalProductScroll.tsx
+   6:8   warning  'Link' is defined but never used          @typescript-eslint/no-unused-vars
+  12:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  13:22  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  16:65  warning  'addItem' is defined but never used       @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\InfiniteProductSlider.tsx
+   60:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  148:17  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  149:22  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:63  warning  'addItem' is defined but never used       @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\MaintenancePage.tsx
+  30:15  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\ProductRevealCard.tsx
+   38:5   error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\ProductRevealCard.tsx:38:5
+  36 |
+  37 |   useEffect(() => {
+> 38 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  39 |     const handleResize = () => {
+  40 |       setIsDesktop(window.innerWidth >= 768);
+  41 |     };  react-hooks/set-state-in-effect
+   78:28  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   97:24  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  102:26  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  119:26  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  137:32  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+  153:27  error  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\TopNavBar.tsx
+   5:31  warning  'useMemo' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    @typescript-eslint/no-unused-vars
+  48:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\TopNavBar.tsx:48:5
+  46 |   
+  47 |   useEffect(() => {
+> 48 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  49 |   }, []);
+  50 |
+  51 |   useEffect(() => {                         react-hooks/set-state-in-effect
+  53:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\TopNavBar.tsx:53:7
+  51 |   useEffect(() => {
+  52 |     if (pathname !== "/") {
+> 53 |       setIsVisible(true);
+     |       ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  54 |       return;
+  55 |     }
+  56 |  react-hooks/set-state-in-effect
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\ImageUploader.tsx
+  70:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\LowStockProducts.tsx
+  71:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\RecentProducts.tsx
+  65:25  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\StatCard.tsx
+  9:15  warning  'ReactNode' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\categories\CategoryBadge.tsx
+  22:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\categories\CategoryCard.tsx
+  78:23  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\categories\CategoryForm.tsx
+  211:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  244:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\categories\CategoryOption.tsx
+  39:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\categories\CategoryPreview.tsx
+  32:13  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\categories\CategorySelector.tsx
+   46:7   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\categories\CategorySelector.tsx:46:7
+  44 |   useEffect(() => {
+  45 |     if (defaultValue !== undefined && defaultValue !== selectedId) {
+> 46 |       setSelectedId(defaultValue || "");
+     |       ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  47 |     }
+  48 |   }, [defaultValue]);
+  49 |  react-hooks/set-state-in-effect
+   48:6   warning  React Hook useEffect has a missing dependency: 'selectedId'. Either include it or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   react-hooks/exhaustive-deps
+  137:9   warning  Elements with the ARIA role "combobox" must have the following attributes defined: aria-controls,aria-expanded                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  jsx-a11y/role-has-required-aria-props
+  156:17  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\categories\CategoryTable.tsx
+  170:27  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  348:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\orders\OrderTimeline.tsx
+  47:25  warning  'index' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\orders\SearchAndFilters.tsx
+  30:6  warning  React Hook useEffect has missing dependencies: 'initialSearch' and 'updateParams'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\products\builders\IngredientBuilder.tsx
+  3:27  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\settings\ImagePreview.tsx
+  3:27  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\admin\settings\SettingsForm.tsx
+  9:8  warning  'ImagePreview' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\components\storefront\categories\CategoryProductsGrid.tsx
+   3:8  warning  'Link' is defined but never used              @typescript-eslint/no-unused-vars
+  18:9  warning  'addItem' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\lib\auth.ts
+   9:12  warning  'userError' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  16:31  warning  'adminError' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\proxy.ts
+  18:48  warning  'options' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\USER\OneDrive\Desktop\ITSWORKING\Al-Hayat_skincare\src\services\orderService.ts
+  7:3  warning  'DashboardOrderPreview' is defined but never used  @typescript-eslint/no-unused-vars
+
+Γ£û 97 problems (61 errors, 36 warnings)
+
