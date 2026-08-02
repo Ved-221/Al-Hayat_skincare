@@ -22,6 +22,20 @@ export default function OrderTimeline({ order }: OrderTimelineProps) {
       color: "bg-blue-50 text-blue-600 border-blue-200",
     },
     {
+      key: "preparing",
+      label: "Order Preparing",
+      time: order.preparing_at,
+      icon: "package_2",
+      color: "bg-purple-50 text-purple-600 border-purple-200",
+    },
+    {
+      key: "ready",
+      label: "Ready for Delivery",
+      time: order.ready_at,
+      icon: "local_shipping",
+      color: "bg-orange-50 text-orange-600 border-orange-200",
+    },
+    {
       key: "completed",
       label: "Order Completed",
       time: order.completed_at,

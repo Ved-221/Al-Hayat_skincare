@@ -22,3 +22,20 @@ export async function requireAdmin() {
 
   return user.user;
 }
+
+export async function requireCustomer() {
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+
+  if (!user?.user) {
+    redirect("/account/login");
+  }
+
+  return user.user;
+}
+
+export async function logoutAction() {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/");
+}

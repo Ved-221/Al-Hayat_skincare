@@ -39,6 +39,7 @@ export interface Order {
   customer_name: string;
   customer_phone: string;
   customer_email: string | null;
+  customer_id?: string | null;
   customer_address: string;
   customer_landmark: string | null;
   customer_city: string;
@@ -58,6 +59,8 @@ export interface Order {
   created_at: string;
   updated_at: string;
   accepted_at: string | null;
+  preparing_at?: string | null;
+  ready_at?: string | null;
   completed_at: string | null;
   cancelled_at: string | null;
   
@@ -97,6 +100,7 @@ export interface CreateOrderInput {
   customer_name: string;
   customer_phone: string;
   customer_email?: string | null;
+  customer_id?: string | null;
   customer_address: string;
   customer_landmark?: string | null;
   customer_city: string;

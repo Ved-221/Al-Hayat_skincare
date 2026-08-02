@@ -281,6 +281,8 @@ export async function updateOrderStatus(
     updated_by: string;
     updated_at: string;
     accepted_at?: string;
+    preparing_at?: string;
+    ready_at?: string;
     completed_at?: string;
     cancelled_at?: string;
   } = {
@@ -291,6 +293,10 @@ export async function updateOrderStatus(
 
   if (status === ORDER_STATUS.ACCEPTED) {
     updates.accepted_at = new Date().toISOString();
+  } else if (status === ORDER_STATUS.PREPARING) {
+    updates.preparing_at = new Date().toISOString();
+  } else if (status === ORDER_STATUS.READY) {
+    updates.ready_at = new Date().toISOString();
   } else if (status === ORDER_STATUS.COMPLETED) {
     updates.completed_at = new Date().toISOString();
   } else if (status === ORDER_STATUS.CANCELLED) {

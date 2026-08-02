@@ -1,6 +1,7 @@
 "use server";
 
 import { requireAdmin } from "@/lib/auth";
+import { createClient } from "@/lib/supabase-server";
 import {
   createOrder,
   deleteOrder,
@@ -23,6 +24,17 @@ export async function createOrderAction(
   // In a real scenario, this might also take FormData,
   // but for API-like usage from a future checkout/cart, accepting the typed object is often better.
   // The service layer handles Zod validation.
+  // Check for a logged-in user and attach their customer_id if present
+  try {
+    const supabase = await createClient();
+    const { data: user } = await supabase.auth.getUser();
+    if (user?.user?.id) {
+      input.customer_id = user.user.id;
+    }
+  } catch {
+    // Ignore auth errors, guest checkout proceeds normally
+  }
+
   try {
     const order = await createOrder(input);
     revalidatePath("/admin/orders"); // Future UI path

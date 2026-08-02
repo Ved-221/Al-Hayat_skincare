@@ -11,6 +11,7 @@ import { useWishlistStore } from "@/store/wishlistStore";
 import CategoryNavigation from "@/components/storefront/categories/CategoryNavigation";
 import type { Category } from "@/types/category";
 import type { StoreSettings } from "@/types/settings";
+import type { User } from "@supabase/supabase-js";
 
 const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "918796513654";
 const WHATSAPP_GREETING = encodeURIComponent("Hello, I'd like to learn more about AL-HAYAT products.");
@@ -28,9 +29,10 @@ const NAV_LINKS_AFTER = [
 interface TopNavBarProps {
   categories?: Category[];
   settings?: StoreSettings;
+  user?: User | null; // Supabase user
 }
 
-export default function TopNavBar({ categories = [], settings }: TopNavBarProps) {
+export default function TopNavBar({ categories = [], settings, user }: TopNavBarProps) {
   const storeName = settings?.store_name || "AL-HAYAT";
   const whatsappNumber = settings?.whatsapp_number || WHATSAPP_NUMBER;
   const logoUrl = settings?.logo_url || "/logo_withoutbg.png";
@@ -205,6 +207,15 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
               Order on WhatsApp
             </a>
 
+            {/* Account Link */}
+            <Link
+              href={user ? "/account" : "/account/login"}
+              className="relative p-2 text-[#434b01] hover:text-[#b22a2b] transition-colors"
+              aria-label="Account"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "24px" }}>person</span>
+            </Link>
+
             {/* Wishlist Link */}
             <Link
               href="/wishlist"
@@ -239,6 +250,15 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
 
           {/* Mobile right side — WhatsApp icon & Cart */}
           <div className="md:hidden flex-1 flex items-center gap-1 sm:gap-2 justify-end -mr-2">
+            {/* Account Link */}
+            <Link
+              href={user ? "/account" : "/account/login"}
+              className="relative p-2 text-[#434b01] transition-colors"
+              aria-label="Account"
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: "24px" }}>person</span>
+            </Link>
+
             {/* Wishlist Link */}
             <Link
               href="/wishlist"

@@ -32,7 +32,7 @@ export default async function ShopLayout({
           🚧 Storefront is in Maintenance Mode — only admins can view it. 🚧
         </div>
       )}
-      <TopNavBar categories={categories} settings={settings} />
+      <TopNavBar categories={categories} settings={settings} user={user} />
       <main className="flex-1 flex flex-col w-full">
         {children}
       </main>
