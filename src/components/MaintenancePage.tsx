@@ -27,7 +27,7 @@ export default function MaintenancePage({ settings }: { settings: StoreSettings 
             className="text-2xl font-bold mb-3" 
             style={{ fontFamily: "'Playfair Display', serif", color: "#434b01" }}
           >
-            We'll be back soon!
+            We&apos;ll be back soon!
           </h1>
           <p 
             className="text-sm leading-relaxed mb-8"

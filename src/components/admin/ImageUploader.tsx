@@ -67,8 +67,8 @@ export default function ImageUploader({
 
       setCurrentUrl(data.url);
       if (onChange) onChange(data.url);
-    } catch (err: any) {
-      setError(err.message || "An unexpected upload error occurred.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An unexpected upload error occurred.");
     } finally {
       setIsUploading(false);
     }

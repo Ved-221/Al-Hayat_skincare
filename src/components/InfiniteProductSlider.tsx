@@ -1,9 +1,11 @@
 "use client";
 
-import { motion, useMotionValue, animate } from "framer-motion";
+import { motion, useMotionValue, animate, type AnimationPlaybackControls } from "framer-motion";
 import { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { ProductRevealCard } from "@/components/ProductRevealCard";
+
+import { type Product } from "@/data/products";
 
 // Custom light-weight useMeasure hook using ResizeObserver & scrollWidth to avoid external library dependencies
 function useMeasure() {
@@ -57,7 +59,7 @@ export function InfiniteSlider({
   const [key, setKey] = useState(0);
 
   useEffect(() => {
-    let controls: any;
+    let controls: AnimationPlaybackControls | undefined;
     const size = direction === "horizontal" ? width : height;
     const contentSize = size + gap;
     const from = reverse ? -contentSize / 2 : 0;
@@ -145,11 +147,10 @@ export function InfiniteSlider({
 }
 
 interface InfiniteProductSliderProps {
-  productsList: any[];
-  addItem: (product: any, qty: number) => void;
+  productsList: Product[];
 }
 
-export default function InfiniteProductSlider({ productsList, addItem }: InfiniteProductSliderProps) {
+export default function InfiniteProductSlider({ productsList }: InfiniteProductSliderProps) {
   return (
     <>
       {/* Mobile view: Standard native horizontal scroll without infinite loop animation */}

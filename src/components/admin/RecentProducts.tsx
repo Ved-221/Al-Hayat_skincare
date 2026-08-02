@@ -6,6 +6,7 @@
  */
 
 import Link from "next/link";
+import Image from "next/image";
 import type { DbProduct } from "@/services/adminProductService";
 import EmptyState from "./EmptyState";
 
@@ -62,11 +63,15 @@ export default function RecentProducts({ products }: RecentProductsProps) {
                   <tr key={product.id} className="hover:bg-gray-50/80 transition-colors">
                     <td className="py-3 pr-4">
                       {product.img ? (
-                        <img
-                          src={product.img}
-                          alt={product.name}
-                          className="h-10 w-10 rounded-lg border border-gray-200 object-cover bg-gray-50"
-                        />
+                        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+                          <Image
+                            src={product.img}
+                            alt={product.name}
+                            fill
+                            sizes="40px"
+                            className="object-cover"
+                          />
+                        </div>
                       ) : (
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 text-gray-400">
                           <span className="material-symbols-outlined text-lg">

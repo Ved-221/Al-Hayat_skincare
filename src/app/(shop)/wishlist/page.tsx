@@ -12,7 +12,8 @@ export default function WishlistPage() {
 
   // Avoid hydration mismatch by waiting for client mount
   useEffect(() => {
-    setMounted(true);
+    const tm = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(tm);
   }, []);
 
   if (!mounted) {

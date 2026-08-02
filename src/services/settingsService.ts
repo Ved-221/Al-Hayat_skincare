@@ -42,7 +42,10 @@ export async function createDefaultSettings(): Promise<StoreSettings> {
     }
 
     return (data as StoreSettings) || DEFAULT_STORE_SETTINGS;
-  } catch (err) {
+  } catch (err: unknown) {
+    if (typeof err === 'object' && err !== null && 'digest' in err && (err as Record<string, unknown>).digest === 'DYNAMIC_SERVER_USAGE') {
+      throw err;
+    }
     console.error("[settingsService] Exception creating default settings:", err);
     return DEFAULT_STORE_SETTINGS;
   }
@@ -81,7 +84,10 @@ export const getStoreSettings = cache(async (): Promise<StoreSettings> => {
       ...DEFAULT_STORE_SETTINGS,
       ...(data as Partial<StoreSettings>),
     };
-  } catch (err) {
+  } catch (err: unknown) {
+    if (typeof err === 'object' && err !== null && 'digest' in err && (err as Record<string, unknown>).digest === 'DYNAMIC_SERVER_USAGE') {
+      throw err;
+    }
     console.error("[settingsService] Exception fetching settings:", err);
     return DEFAULT_STORE_SETTINGS;
   }

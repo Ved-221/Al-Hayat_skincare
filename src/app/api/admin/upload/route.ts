@@ -128,19 +128,19 @@ export async function POST(req: NextRequest) {
         url: urlPath,
         note: storageError ? `Saved to local workspace (${storageError.message})` : undefined,
       });
-    } catch (fsErr: any) {
+    } catch (fsErr: unknown) {
       console.error("[uploadRoute] Local save error:", fsErr);
       return NextResponse.json(
         {
-          error: `Storage upload failed (${storageError?.message || "Bucket missing"}) and local filesystem write failed (${fsErr.message}).`,
+          error: `Storage upload failed (${storageError?.message || "Bucket missing"}) and local filesystem write failed (${fsErr instanceof Error ? fsErr.message : "Unknown error"}).`,
         },
         { status: 500 }
       );
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[uploadRoute] Unexpected exception:", err);
     return NextResponse.json(
-      { error: err.message || "An unexpected error occurred during image upload." },
+      { error: err instanceof Error ? err.message : "An unexpected error occurred during image upload." },
       { status: 500 }
     );
   }
@@ -174,7 +174,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+  } catch (err: unknown) {
+    return NextResponse.json({ error: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
 }

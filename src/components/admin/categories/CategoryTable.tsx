@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { CategoryWithStats, CategoryDropdownOption } from "@/types/category";
 import CategoryStatusBadge from "./CategoryStatusBadge";
 import VisibilityToggle from "./VisibilityToggle";
@@ -165,12 +166,14 @@ export default function CategoryTable({
                   {/* Thumbnail & Name */}
                   <td className="px-4 py-3.5">
                     <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
+                      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
                         {cat.thumbnail_url ? (
-                          <img
+                          <Image
                             src={cat.thumbnail_url}
                             alt={cat.alt_text || cat.name}
-                            className="h-full w-full object-cover"
+                            fill
+                            sizes="40px"
+                            className="object-cover"
                           />
                         ) : (
                           <span className="material-symbols-outlined text-gray-400 text-lg">
@@ -345,10 +348,12 @@ export default function CategoryTable({
 
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center">
                   {cat.thumbnail_url ? (
-                    <img
+                    <Image
                       src={cat.thumbnail_url}
                       alt={cat.alt_text || cat.name}
-                      className="h-full w-full object-cover"
+                      fill
+                      sizes="64px"
+                      className="object-cover"
                     />
                   ) : (
                     <span className="material-symbols-outlined text-gray-400 text-2xl">

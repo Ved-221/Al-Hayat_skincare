@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { ShoppingCart, Heart, Check, X } from "lucide-react";
 import { type Product } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
@@ -35,13 +35,16 @@ export function ProductRevealCard({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
     const handleResize = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    const tm = setTimeout(() => setMounted(true), 0);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      clearTimeout(tm);
+    };
   }, []);
 
   const addItem = useCartStore((state) => state.addItem);
@@ -75,7 +78,7 @@ export function ProductRevealCard({
     }
   };
 
-  const containerVariants: any = {
+  const containerVariants: Variants = {
     rest: {
       scale: 1,
       y: 0,
@@ -94,12 +97,12 @@ export function ProductRevealCard({
       : {},
   };
 
-  const imageVariants: any = {
+  const imageVariants: Variants = {
     rest: { scale: 1 },
     hover: { scale: 1.06 },
   };
 
-  const overlayVariants: any = {
+  const overlayVariants: Variants = {
     rest: {
       y: "100%",
       opacity: 0,
@@ -116,7 +119,7 @@ export function ProductRevealCard({
     },
   };
 
-  const contentVariants: any = {
+  const contentVariants: Variants = {
     rest: {
       opacity: 0,
       y: 15,
@@ -134,7 +137,7 @@ export function ProductRevealCard({
     },
   };
 
-  const buttonVariants_motion: any = {
+  const buttonVariants_motion: Variants = {
     rest: { scale: 1, y: 0 },
     hover: shouldAnimate
       ? {
@@ -150,7 +153,7 @@ export function ProductRevealCard({
     tap: shouldAnimate ? { scale: 0.98 } : {},
   };
 
-  const favoriteVariants: any = {
+  const favoriteVariants: Variants = {
     rest: { scale: 1, rotate: 0 },
     favorite: {
       scale: [1, 1.3, 1],

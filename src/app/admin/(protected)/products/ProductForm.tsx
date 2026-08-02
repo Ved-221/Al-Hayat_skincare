@@ -12,6 +12,7 @@
  */
 
 import React, { useActionState, useState, useEffect } from "react";
+import Link from "next/link";
 import type { ActionResult } from "./actions";
 import type { DbProduct } from "@/services/adminProductService";
 import type { CategoryDropdownOption } from "@/types/category";
@@ -363,7 +364,7 @@ export default function ProductForm({
         />
 
         <div className="mt-6">
-          <IngredientBuilder defaultValue={defaultValues?.detailed_ingredients as any} />
+          <IngredientBuilder defaultValue={defaultValues?.detailed_ingredients as React.ComponentProps<typeof IngredientBuilder>['defaultValue']} />
           <FieldError errors={errors} field="detailed_ingredients" />
         </div>
       </section>
@@ -371,14 +372,14 @@ export default function ProductForm({
       {/* ── Benefits ───────────────────────────────────────────── */}
       <section className="rounded-lg border bg-white p-6">
         <h2 className="mb-4 text-base font-semibold text-gray-900">Detailed Benefits</h2>
-        <DetailedBenefitBuilder defaultValue={defaultValues?.detailed_benefits as any} />
+        <DetailedBenefitBuilder defaultValue={defaultValues?.detailed_benefits as React.ComponentProps<typeof DetailedBenefitBuilder>['defaultValue']} />
         <FieldError errors={errors} field="detailed_benefits" />
       </section>
 
       {/* ── Ritual ─────────────────────────────────────────────── */}
       <section className="rounded-lg border bg-white p-6">
         <h2 className="mb-4 text-base font-semibold text-gray-900">Usage Ritual</h2>
-        <RitualBuilder defaultValue={defaultValues?.ritual as any} />
+        <RitualBuilder defaultValue={defaultValues?.ritual as React.ComponentProps<typeof RitualBuilder>['defaultValue']} />
         <FieldError errors={errors} field="ritual" />
       </section>
 
@@ -396,12 +397,12 @@ export default function ProductForm({
         </div>
 
         <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
-          <a
+          <Link
             href="/admin/products"
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
           >
             Cancel
-          </a>
+          </Link>
           <button
             type="submit"
             disabled={isPending}

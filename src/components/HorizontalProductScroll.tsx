@@ -3,17 +3,17 @@
 
 import { motion, useTransform, useScroll } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
-import Link from "next/link";
 import { ProductRevealCard } from "@/components/ProductRevealCard";
 
 // Local ProductCard removed in favor of ProductRevealCard
 
+import { type Product } from "@/data/products";
+
 interface HorizontalProductScrollProps {
-  productsList: any[];
-  addItem: (product: any, qty: number) => void;
+  productsList: Product[];
 }
 
-export default function HorizontalProductScroll({ productsList, addItem }: HorizontalProductScrollProps) {
+export default function HorizontalProductScroll({ productsList }: HorizontalProductScrollProps) {
   const targetRef = useRef<HTMLDivElement>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
   const [xTranslation, setXTranslation] = useState(0);

@@ -27,7 +27,7 @@ import { CreateCategorySchema, UpdateCategorySchema, type CreateCategoryInput, t
 import { revalidatePath } from "next/cache";
 
 export type CategoryActionResult =
-  | { success: true; data?: any }
+  | { success: true; data?: unknown }
   | { success: false; error: string; errors?: Record<string, string[]> };
 
 // ---------------------------------------------------------------------------
@@ -55,8 +55,8 @@ export async function createCategoryAction(
     revalidatePath("/admin/categories");
     revalidatePath("/products");
     return { success: true, data: category };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Failed to create category" };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : "Failed to create category" };
   }
 }
 
@@ -87,8 +87,8 @@ export async function updateCategoryAction(
     revalidatePath("/products");
     if (category.slug) revalidatePath(`/products/${category.slug}`);
     return { success: true, data: category };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Failed to update category" };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : "Failed to update category" };
   }
 }
 
@@ -126,8 +126,8 @@ export async function deleteCategoryAction(
     revalidatePath("/admin/categories");
     revalidatePath("/products");
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Failed to delete category" };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : "Failed to delete category" };
   }
 }
 
@@ -143,8 +143,8 @@ export async function restoreCategoryAction(id: string): Promise<CategoryActionR
     revalidatePath("/admin/categories");
     revalidatePath("/products");
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Failed to restore category" };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : "Failed to restore category" };
   }
 }
 
@@ -160,8 +160,8 @@ export async function toggleVisibilityAction(id: string): Promise<CategoryAction
     revalidatePath("/admin/categories");
     revalidatePath("/products");
     return { success: true, data: updated };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Failed to toggle visibility" };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : "Failed to toggle visibility" };
   }
 }
 
@@ -172,8 +172,8 @@ export async function toggleFeaturedAction(id: string): Promise<CategoryActionRe
     const updated = await toggleFeatured(id);
     revalidatePath("/admin/categories");
     return { success: true, data: updated };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Failed to toggle featured status" };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : "Failed to toggle featured status" };
   }
 }
 
@@ -189,8 +189,8 @@ export async function reorderCategoriesAction(orderedIds: string[]): Promise<Cat
     revalidatePath("/admin/categories");
     revalidatePath("/products");
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message || "Failed to reorder categories" };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : "Failed to reorder categories" };
   }
 }
 
@@ -210,7 +210,7 @@ export async function bulkActionCategoriesAction(
     revalidatePath("/admin/categories");
     revalidatePath("/products");
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message || `Failed to execute bulk action (${action})` };
+  } catch (err: unknown) {
+    return { success: false, error: err instanceof Error ? err.message : `Failed to execute bulk action (${action})` };
   }
 }

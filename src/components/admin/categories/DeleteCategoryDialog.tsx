@@ -48,7 +48,7 @@ export default function DeleteCategoryDialog({
         </div>
 
         <p className="text-sm text-gray-600">
-          Are you sure you want to delete <strong className="text-gray-900">"{category.name}"</strong>?
+          Are you sure you want to delete <strong className="text-gray-900">&quot;{category.name}&quot;</strong>?
           This category has 0 products and will be soft-deleted. You can restore it later from the Deleted view.
         </p>
 

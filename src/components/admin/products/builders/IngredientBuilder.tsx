@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export interface DetailedIngredient {
   name: string;
@@ -116,7 +116,7 @@ export default function IngredientBuilder({ defaultValue }: IngredientBuilderPro
           </span>
           <p className="text-xs font-semibold text-gray-700">No ingredients configured yet</p>
           <p className="mt-1 text-[11px] text-gray-400">
-            Click "Add Ingredient" to list natural herbs, botanical oils, and active formulations.
+            Click &quot;Add Ingredient&quot; to list natural herbs, botanical oils, and active formulations.
           </p>
         </div>
       ) : activeTab === "edit" ? (

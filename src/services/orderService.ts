@@ -4,7 +4,6 @@ import {
   OrderItem,
   CreateOrderInput,
   OrderStatus,
-  DashboardOrderPreview,
   CreateOrderSchema,
   ORDER_STATUS,
 } from "@/types/order";

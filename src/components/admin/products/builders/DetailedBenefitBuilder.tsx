@@ -130,7 +130,7 @@ export default function DetailedBenefitBuilder({ defaultValue }: DetailedBenefit
           </span>
           <p className="text-xs font-semibold text-gray-700">No benefits configured yet</p>
           <p className="mt-1 text-[11px] text-gray-400">
-            Click "Add Benefit" to showcase clinical efficacy, hydration, and natural healing properties.
+            Click &quot;Add Benefit&quot; to showcase clinical efficacy, hydration, and natural healing properties.
           </p>
         </div>
       ) : activeTab === "edit" ? (
@@ -243,7 +243,7 @@ export default function DetailedBenefitBuilder({ defaultValue }: DetailedBenefit
             <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400">
               Storefront Preview
             </h4>
-            <p className="text-sm font-semibold text-gray-900">Why You'll Love This Ritual</p>
+            <p className="text-sm font-semibold text-gray-900">Why You&apos;ll Love This Ritual</p>
           </div>
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

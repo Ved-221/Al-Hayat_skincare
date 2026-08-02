@@ -6,7 +6,7 @@
  */
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+
 
 export interface StatCardProps {
   title: string;

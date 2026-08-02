@@ -4,12 +4,13 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { ProductRevealCard } from "@/components/ProductRevealCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { type Product } from "@/data/products";
+
 interface BestSellersCarouselProps {
-  productsList: any[];
-  addItem: (product: any, qty: number) => void;
+  productsList: Product[];
 }
 
-export default function BestSellersCarousel({ productsList, addItem }: BestSellersCarouselProps) {
+export default function BestSellersCarousel({ productsList }: BestSellersCarouselProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { requireAdmin } from "@/lib/auth";
 import { getOrderByIdWithProductDetails } from "@/services/orderService";
 import StatusBadge from "@/components/admin/orders/StatusBadge";
@@ -22,7 +23,7 @@ export default async function AdminOrderDetailsPage({ params }: PageProps) {
   let order;
   try {
     order = await getOrderByIdWithProductDetails(id);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Order details fetch error:", error);
     return (
       <div className="max-w-3xl mx-auto p-6 text-center space-y-4">
@@ -99,15 +100,17 @@ export default async function AdminOrderDetailsPage({ params }: PageProps) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {(order.items as any[]).map((item) => (
+                  {(order.items || []).map((item) => (
                     <tr key={item.id} className="align-middle">
                       {/* Product details and thumbnail */}
                       <td className="py-4 pr-4">
                         <div className="flex items-center gap-4">
                           {item.product?.img ? (
-                            <img
+                            <Image
                               src={item.product.img}
                               alt={item.product_name}
+                              width={48}
+                              height={48}
                               className="h-12 w-12 rounded-lg border border-gray-150 object-cover bg-gray-50"
                             />
                           ) : (

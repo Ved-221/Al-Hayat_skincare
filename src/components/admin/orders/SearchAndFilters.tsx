@@ -27,6 +27,7 @@ export default function SearchAndFilters() {
     }, 400);
 
     return () => clearTimeout(handler);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchVal]);
 
   // Handle URL updates

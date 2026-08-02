@@ -4,19 +4,16 @@ import { redirect } from "next/navigation";
 export async function requireAdmin() {
   const supabase = await createClient();
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+  const { data: user } = await supabase.auth.getUser();
 
-  if (!user) {
+  if (!user?.user) {
     redirect("/admin/login");
   }
 
-  const { data: admin, error: adminError } = await supabase
+  const { data: admin } = await supabase
     .from("admins")
     .select("id")
-    .eq("id", user.id)
+    .eq("id", user.user.id)
     .single();
 
   if (!admin) {

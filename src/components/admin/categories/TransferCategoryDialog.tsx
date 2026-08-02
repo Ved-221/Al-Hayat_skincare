@@ -58,7 +58,7 @@ export default function TransferCategoryDialog({
         </div>
 
         <p className="text-sm text-gray-600">
-          The category <strong className="text-gray-900">"{category.name}"</strong> currently contains{" "}
+          The category <strong className="text-gray-900">&quot;{category.name}&quot;</strong> currently contains{" "}
           <span className="font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
             {category.totalProducts} product(s)
           </span>

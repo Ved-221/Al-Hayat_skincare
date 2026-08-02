@@ -6,7 +6,7 @@ import { StoreSettingsSchema } from "@/types/settings";
 import { updateStoreSettingsAction } from "@/app/admin/(protected)/settings/actions";
 import SettingsSection from "./SettingsSection";
 import SettingsCard from "./SettingsCard";
-import ImagePreview from "./ImagePreview";
+
 import StatusSelector from "./StatusSelector";
 import ImageUploader from "@/components/admin/ImageUploader";
 
@@ -48,7 +48,7 @@ export default function SettingsForm({ initialSettings }: SettingsFormProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-    let parsedValue: any = value;
+    let parsedValue: string | number = value;
     if (type === "number") {
       parsedValue = value === "" ? 0 : Number(value);
     }

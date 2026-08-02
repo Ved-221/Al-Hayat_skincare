@@ -130,7 +130,7 @@ export default function RitualBuilder({ defaultValue }: RitualBuilderProps) {
           </span>
           <p className="text-xs font-semibold text-gray-700">No usage steps configured yet</p>
           <p className="mt-1 text-[11px] text-gray-400">
-            Click "Add Step" to guide customers on exact application rituals and timings.
+            Click &quot;Add Step&quot; to guide customers on exact application rituals and timings.
           </p>
         </div>
       ) : activeTab === "edit" ? (

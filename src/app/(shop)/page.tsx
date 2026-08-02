@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
-import { useCartStore } from "@/store/cartStore";
+
 import FeaturedCategoriesSection from "@/components/storefront/categories/FeaturedCategoriesSection";
-import { ExpandingCards, CardItem } from "@/components/ExpandingCards";
+import { ExpandingCards } from "@/components/ExpandingCards";
 import BestSellersCarousel from "@/components/BestSellersCarousel";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -16,7 +16,7 @@ if (typeof window !== "undefined") {
   ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
-const SCROLL_DISTANCE = 3500;
+
 
 const WHATSAPP_NUMBER = "919876543210";
 
@@ -239,7 +239,7 @@ export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [productsList, setProductsList] = useState(PRODUCTS);
   const [isMobile, setIsMobile] = useState(false);
-  const addItem = useCartStore((state) => state.addItem);
+
   const [mediaMap, setMediaMap] = useState<Record<string, string>>({});
 
   // Detect screen size for mobile responsive video source
@@ -801,7 +801,7 @@ export default function Home() {
           </div>
 
           <div className="w-full">
-            <BestSellersCarousel productsList={productsList} addItem={addItem} />
+            <BestSellersCarousel productsList={productsList} />
           </div>
         </section>
 

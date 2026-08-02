@@ -4,7 +4,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import CartSummary from "@/components/checkout/CartSummary";
-import CheckoutForm from "@/components/checkout/CheckoutForm";
+import CheckoutForm, { type CheckoutFormValues } from "@/components/checkout/CheckoutForm";
 import { createOrderAction } from "@/app/admin/(protected)/orders/actions";
 import { getProducts } from "@/services/productService";
 
@@ -16,16 +16,17 @@ export default function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    const tm = setTimeout(() => setMounted(true), 0);
     // If cart is empty on mount, redirect to cart page
     if (useCartStore.getState().items.length === 0) {
       router.push("/cart");
     }
+    return () => clearTimeout(tm);
   }, [router]);
 
   if (!mounted || items.length === 0) return null;
 
-  const handleSubmitOrder = async (formData: any) => {
+  const handleSubmitOrder = async (formData: CheckoutFormValues) => {
     setIsSubmitting(true);
     setError(null);
 
@@ -81,8 +82,8 @@ export default function CheckoutPage() {
       } else {
         setError(result.error || "Failed to create order. Please try again.");
       }
-    } catch (err: any) {
-      setError(err.message || "An unexpected error occurred.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
       setIsSubmitting(false);
     }

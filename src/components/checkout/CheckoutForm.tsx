@@ -18,7 +18,7 @@ const CheckoutFormSchema = CreateOrderSchema.pick({
   notes: true,
 });
 
-type CheckoutFormValues = z.infer<typeof CheckoutFormSchema>;
+export type CheckoutFormValues = z.infer<typeof CheckoutFormSchema>;
 
 interface CheckoutFormProps {
   onSubmit: (data: CheckoutFormValues) => void;

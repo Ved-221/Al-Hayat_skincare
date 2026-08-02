@@ -37,8 +37,8 @@ export async function getOrderForWhatsAppAction(orderNumber: string): Promise<Or
     };
 
     return { success: true, data: payload };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error fetching order for WhatsApp:", error);
-    return { success: false, error: error.message || "Failed to load order" };
+    return { success: false, error: error instanceof Error ? error.message : "Failed to load order" };
   }
 }

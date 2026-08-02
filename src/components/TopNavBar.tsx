@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import CartDrawer from "./CartDrawer";
 import { useLockBodyScroll } from "@/lib/useLockBodyScroll";
@@ -37,7 +37,8 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
-  const [isVisible, setIsVisible] = useState(pathname !== "/");
+  const [isScrolled, setIsScrolled] = useState(false);
+  const isVisible = pathname !== "/" || isScrolled;
   const { getTotalItems } = useCartStore();
   const { items: wishlistItems } = useWishlistStore();
   const [mounted, setMounted] = useState(false);
@@ -45,18 +46,18 @@ export default function TopNavBar({ categories = [], settings }: TopNavBarProps)
   useLockBodyScroll(mobileOpen);
   
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (pathname !== "/") {
-      setIsVisible(true);
       return;
     }
 
     const handleScroll = () => {
       const scrollDistance = 3500; // matches SCROLL_DISTANCE in page.tsx
-      setIsVisible(window.scrollY >= scrollDistance);
+      setIsScrolled(window.scrollY >= scrollDistance);
     };
 
     // Initial check

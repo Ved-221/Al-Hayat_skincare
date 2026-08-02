@@ -3,6 +3,7 @@
 import React from "react";
 import type { CategoryDropdownOption } from "@/types/category";
 import CategoryStatusBadge from "./CategoryStatusBadge";
+import Image from "next/image";
 
 interface CategoryPreviewProps {
   category: CategoryDropdownOption | null;
@@ -27,12 +28,14 @@ export default function CategoryPreview({ category, fallbackName }: CategoryPrev
 
       <div className="flex items-center gap-3">
         {/* Thumbnail */}
-        <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white flex items-center justify-center shadow-sm">
+        <div className="relative h-10 w-10 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 bg-white flex items-center justify-center shadow-sm">
           {category?.thumbnail_url ? (
-            <img
+            <Image
               src={category.thumbnail_url}
               alt={category.name}
-              className="h-full w-full object-cover"
+              fill
+              sizes="40px"
+              className="object-cover"
             />
           ) : (
             <span className="text-base">🌿</span>

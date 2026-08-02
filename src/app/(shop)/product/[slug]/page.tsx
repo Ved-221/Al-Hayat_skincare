@@ -38,7 +38,8 @@ export default function ProductDetailPage({ params }: Props) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const tm = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(tm);
   }, []);
 
   // Find product by slug initially from static list, then fetch updated from Supabase
@@ -102,7 +103,7 @@ export default function ProductDetailPage({ params }: Props) {
             marginBottom: "24px",
           }}
         >
-          We couldn't find the product you're looking for.
+          We couldn&apos;t find the product you&apos;re looking for.
         </p>
         <Link
           href="/products"
@@ -676,10 +677,10 @@ export default function ProductDetailPage({ params }: Props) {
                   lineHeight: 1.7,
                 }}
               >
-                "I formulated this {product.name.toLowerCase()} to bridge the
+                &quot;I formulated this {product.name.toLowerCase()} to bridge the
                 gap between clinical efficacy and the soul-soothing rituals of
-                our heritage. We use nature's finest to deliver beautiful,
-                reliable results."
+                our heritage. We use nature&apos;s finest to deliver beautiful,
+                reliable results.&quot;
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-full overflow-hidden border border-[#c8c7b5]">

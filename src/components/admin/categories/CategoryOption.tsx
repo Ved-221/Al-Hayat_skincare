@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { CategoryDropdownOption } from "@/types/category";
+import Image from "next/image";
 
 interface CategoryOptionProps {
   category: CategoryDropdownOption;
@@ -34,12 +35,14 @@ export default function CategoryOption({
     >
       <div className="flex items-center gap-2.5 overflow-hidden">
         {/* Thumbnail or Botanical Icon Fallback */}
-        <div className="h-7 w-7 flex-shrink-0 overflow-hidden rounded border border-gray-200 bg-gray-50 flex items-center justify-center text-xs">
+        <div className="relative h-7 w-7 flex-shrink-0 overflow-hidden rounded border border-gray-200 bg-gray-50 flex items-center justify-center text-xs">
           {category.thumbnail_url ? (
-            <img
+            <Image
               src={category.thumbnail_url}
               alt={category.name}
-              className="h-full w-full object-cover"
+              fill
+              sizes="28px"
+              className="object-cover"
             />
           ) : (
             <span>🌿</span>

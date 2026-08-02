@@ -12,7 +12,7 @@ import CategorySidebar from "@/components/storefront/categories/CategorySidebar"
 import CategoryChip from "@/components/storefront/categories/CategoryChip";
 import CategoryEmptyState from "@/components/storefront/categories/CategoryEmptyState";
 
-const WHATSAPP_NUMBER = "919876543210";
+
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -33,14 +33,17 @@ function ProductsContent() {
 
   // Sync state with URL params on navigation change
   useEffect(() => {
-    setActiveCategorySlug(searchParams.get("category") || "all");
-    setSearchQuery(searchParams.get("search") || "");
+    const tm = setTimeout(() => {
+      setActiveCategorySlug(searchParams.get("category") || "all");
+      setSearchQuery(searchParams.get("search") || "");
+    }, 0);
+    return () => clearTimeout(tm);
   }, [searchParams]);
 
   // Load dynamic categories & products from Supabase
   useEffect(() => {
     let mounted = true;
-    setLoadingData(true);
+    const tm = setTimeout(() => setLoadingData(true), 0);
 
     Promise.all([
       getCategoriesWithProductCounts(),
@@ -58,6 +61,7 @@ function ProductsContent() {
 
     return () => {
       mounted = false;
+      clearTimeout(tm);
     };
   }, []);
 

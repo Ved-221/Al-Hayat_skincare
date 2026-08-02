@@ -43,11 +43,11 @@ export async function updateStoreSettingsAction(
     revalidatePath("/admin/settings");
 
     return { success: true, data: updated };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[updateStoreSettingsAction] Error:", err);
     return {
       success: false,
-      error: err.message || "Failed to update store settings",
+      error: err instanceof Error ? err.message : "Failed to update store settings",
     };
   }
 }

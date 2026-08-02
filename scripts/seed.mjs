@@ -398,7 +398,7 @@ async function seed() {
   
   for (const product of PRODUCTS) {
     console.log(`Inserting ${product.name}...`);
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("products")
       .upsert(product, { onConflict: "slug" });
 

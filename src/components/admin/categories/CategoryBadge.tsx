@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface CategoryBadgeProps {
   category?: {
@@ -17,12 +18,14 @@ export default function CategoryBadge({ category, fallbackName }: CategoryBadgeP
 
   return (
     <div className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-gray-50/80 px-2.5 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100">
-      <div className="h-4 w-4 flex-shrink-0 overflow-hidden rounded-full border border-gray-200 bg-white flex items-center justify-center text-[9px]">
+        <div className="relative h-4 w-4 flex-shrink-0 overflow-hidden rounded-full border border-gray-200 bg-white flex items-center justify-center text-[9px]">
         {category?.thumbnail_url ? (
-          <img
+          <Image
             src={category.thumbnail_url}
             alt={displayName}
-            className="h-full w-full object-cover"
+            fill
+            sizes="16px"
+            className="object-cover"
           />
         ) : (
           <span>🌿</span>

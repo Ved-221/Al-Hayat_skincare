@@ -9,7 +9,7 @@ import {
 import { CreateOrderInput, OrderStatus } from "@/types/order";
 import { revalidatePath } from "next/cache";
 
-export type ActionResponse<T = any> =
+export type ActionResponse<T = unknown> =
   | { success: true; data?: T }
   | { success: false; error: string; errors?: Record<string, string[]> };
 
@@ -27,13 +27,13 @@ export async function createOrderAction(
     const order = await createOrder(input);
     revalidatePath("/admin/orders"); // Future UI path
     return { success: true, data: order };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating order:", error);
     
     // Handle Zod errors if they bubble up, or generic errors
-    if (error.issues) {
+    if (typeof error === 'object' && error !== null && 'issues' in error && Array.isArray((error as { issues: unknown[] }).issues)) {
       const fieldErrors: Record<string, string[]> = {};
-      error.issues.forEach((issue: any) => {
+      (error as { issues: Array<{ path: (string | number)[], message: string }> }).issues.forEach((issue) => {
         const path = issue.path.join(".");
         if (!fieldErrors[path]) fieldErrors[path] = [];
         fieldErrors[path].push(issue.message);
@@ -41,7 +41,7 @@ export async function createOrderAction(
       return { success: false, error: "Validation failed", errors: fieldErrors };
     }
     
-    return { success: false, error: error.message || "Failed to create order" };
+    return { success: false, error: error instanceof Error ? error.message : "Failed to create order" };
   }
 }
 
@@ -62,9 +62,9 @@ export async function updateOrderStatusAction(
     revalidatePath(`/admin/orders/${id}`); // Future UI path
     
     return { success: true, data: updatedOrder };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error updating order status:", error);
-    return { success: false, error: error.message || "Failed to update order status" };
+    return { success: false, error: error instanceof Error ? error.message : "Failed to update order status" };
   }
 }
 
@@ -81,8 +81,8 @@ export async function deleteOrderAction(id: string): Promise<ActionResponse> {
     revalidatePath("/admin/orders"); // Future UI path
     
     return { success: true };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error deleting order:", error);
-    return { success: false, error: error.message || "Failed to delete order" };
+    return { success: false, error: error instanceof Error ? error.message : "Failed to delete order" };
   }
 }

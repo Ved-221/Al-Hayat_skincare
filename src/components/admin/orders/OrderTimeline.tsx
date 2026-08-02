@@ -44,7 +44,7 @@ export default function OrderTimeline({ order }: OrderTimelineProps) {
       </h3>
 
       <div className="relative border-l border-gray-200 ml-3 space-y-6">
-        {events.map((e, index) => (
+        {events.map((e) => (
           <div key={e.key} className="relative pl-7">
             {/* Timeline dot/icon */}
             <span

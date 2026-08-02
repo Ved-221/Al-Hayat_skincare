@@ -3,6 +3,7 @@
 import React, { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createCategoryAction, updateCategoryAction } from "@/app/admin/(protected)/categories/actions";
 import type { Category, CategoryVisibility } from "@/types/category";
 import { CATEGORY_VISIBILITY } from "@/types/category";
@@ -206,15 +207,14 @@ export default function CategoryForm({ initialData }: CategoryFormProps) {
                   placeholder="https://.../thumbnail.jpg"
                   className="flex-1 rounded-lg border border-gray-200 py-2.5 px-3.5 text-sm text-gray-900 outline-hidden focus:border-gray-900 transition-colors"
                 />
-                <div className="h-12 w-12 shrink-0 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center">
+                <div className="relative h-12 w-12 shrink-0 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center">
                   {thumbnailUrl ? (
-                    <img
+                    <Image
                       src={thumbnailUrl}
                       alt="Preview"
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = "none";
-                      }}
+                      fill
+                      sizes="48px"
+                      className="object-cover"
                     />
                   ) : (
                     <span className="material-symbols-outlined text-gray-400 text-xl">image</span>
@@ -239,15 +239,14 @@ export default function CategoryForm({ initialData }: CategoryFormProps) {
                   placeholder="https://.../banner-wide.jpg"
                   className="flex-1 rounded-lg border border-gray-200 py-2.5 px-3.5 text-sm text-gray-900 outline-hidden focus:border-gray-900 transition-colors"
                 />
-                <div className="h-12 w-24 shrink-0 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center">
+                <div className="relative h-12 w-24 shrink-0 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden flex items-center justify-center">
                   {bannerUrl ? (
-                    <img
+                    <Image
                       src={bannerUrl}
                       alt="Banner Preview"
-                      className="h-full w-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = "none";
-                      }}
+                      fill
+                      sizes="96px"
+                      className="object-cover"
                     />
                   ) : (
                     <span className="material-symbols-outlined text-gray-400 text-xl">panorama</span>

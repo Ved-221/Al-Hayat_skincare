@@ -17,8 +17,8 @@ function OrderSuccessContent() {
 
   useEffect(() => {
     if (!orderNumber) {
-      setLoading(false);
-      return;
+      const tm = setTimeout(() => setLoading(false), 0);
+      return () => clearTimeout(tm);
     }
 
     async function fetchOrder() {
@@ -59,7 +59,7 @@ function OrderSuccessContent() {
       )}
 
       <p style={{ fontFamily: "'Inter', sans-serif", fontSize: "14px", color: "#787868", marginBottom: "32px" }}>
-        We'll contact you shortly regarding the delivery details. Please send your order via WhatsApp for faster processing!
+        We&apos;ll contact you shortly regarding the delivery details. Please send your order via WhatsApp for faster processing!
       </p>
 
       {loading ? (

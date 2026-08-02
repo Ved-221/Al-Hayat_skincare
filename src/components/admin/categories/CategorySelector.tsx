@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useMemo } from "react";
 import type { CategoryDropdownOption } from "@/types/category";
 import { CATEGORY_VISIBILITY } from "@/types/category";
 import CategoryOption from "./CategoryOption";
+import Image from "next/image";
 
 interface CategorySelectorProps {
   categories: CategoryDropdownOption[];
@@ -40,12 +41,7 @@ export default function CategorySelector({
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Sync state if defaultValue changes
-  useEffect(() => {
-    if (defaultValue !== undefined && defaultValue !== selectedId) {
-      setSelectedId(defaultValue || "");
-    }
-  }, [defaultValue]);
+
 
   // Find currently selected category
   const selectedCategory = useMemo(() => {
@@ -137,6 +133,7 @@ export default function CategorySelector({
         role="combobox"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        aria-controls="category-options-list"
         onClick={() => {
           setIsOpen(!isOpen);
           if (!isOpen) {
@@ -151,12 +148,14 @@ export default function CategorySelector({
       >
         {selectedCategory ? (
           <div className="flex items-center gap-2.5 truncate">
-            <div className="h-6 w-6 flex-shrink-0 overflow-hidden rounded border border-gray-200 bg-gray-50 flex items-center justify-center text-xs">
+            <div className="relative h-6 w-6 flex-shrink-0 overflow-hidden rounded border border-gray-200 bg-gray-50 flex items-center justify-center text-xs">
               {selectedCategory.thumbnail_url ? (
-                <img
+                <Image
                   src={selectedCategory.thumbnail_url}
                   alt={selectedCategory.name}
-                  className="h-full w-full object-cover"
+                  fill
+                  sizes="24px"
+                  className="object-cover"
                 />
               ) : (
                 <span>🌿</span>
@@ -193,6 +192,7 @@ export default function CategorySelector({
 
           {/* Options List */}
           <ul
+            id="category-options-list"
             role="listbox"
             className="max-h-60 overflow-y-auto divide-y divide-gray-50 py-1"
           >

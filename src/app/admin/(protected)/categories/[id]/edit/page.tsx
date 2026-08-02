@@ -38,7 +38,7 @@ export default async function EditCategoryPage({ params }: EditPageProps) {
             <span className="text-gray-700">Edit Category</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl flex items-center gap-3">
-            <span>Edit "{category.name}"</span>
+            <span>Edit &quot;{category.name}&quot;</span>
             <span className="font-mono text-xs font-normal text-gray-500 rounded bg-gray-100 px-2 py-1 border border-gray-200">
               /{category.slug}
             </span>

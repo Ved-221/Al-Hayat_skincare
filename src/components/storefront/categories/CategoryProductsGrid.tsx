@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import { useCartStore } from "@/store/cartStore";
+
 import type { Product } from "@/data/products";
 import CategoryEmptyState from "./CategoryEmptyState";
 import { ProductRevealCard } from "@/components/ProductRevealCard";
@@ -15,8 +14,6 @@ export default function CategoryProductsGrid({
   products,
   categoryName,
 }: CategoryProductsGridProps) {
-  const addItem = useCartStore((state) => state.addItem);
-
   if (!products || products.length === 0) {
     return <CategoryEmptyState categoryName={categoryName} />;
   }
