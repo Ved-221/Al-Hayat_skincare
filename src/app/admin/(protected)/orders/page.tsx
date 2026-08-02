@@ -25,7 +25,7 @@ export default async function AdminOrdersPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const search = params.search || "";
   const status = (params.status as OrderStatus | "All") || "All";
-  const sort = params.sort || "newest";
+  const sort = (params.sort as "newest" | "oldest" | "highest_amount" | "lowest_amount" | undefined) || "newest";
   const page = parseInt(params.page || "1", 10);
   const limit = 10;
 
