@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 
 interface ImagePreviewProps {
   url: string | null | undefined;
@@ -11,9 +12,7 @@ interface ImagePreviewProps {
 export default function ImagePreview({ url, label, type = "logo" }: ImagePreviewProps) {
   const [hasError, setHasError] = useState(false);
 
-  useEffect(() => {
-    setHasError(false);
-  }, [url]);
+
 
   const isValidUrl = url && typeof url === "string" && url.trim().length > 0 && !hasError;
 
@@ -26,7 +25,7 @@ export default function ImagePreview({ url, label, type = "logo" }: ImagePreview
         }`}
       >
         {isValidUrl ? (
-          <img
+          <Image layout="fill" objectFit="cover" unoptimized
             src={url}
             alt={label}
             onError={() => setHasError(true)}

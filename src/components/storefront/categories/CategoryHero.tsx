@@ -1,4 +1,5 @@
 import type { Category } from "@/types/category";
+import Image from "next/image";
 
 interface CategoryHeroProps {
   category: Category;
@@ -10,10 +11,12 @@ export default function CategoryHero({ category, productCount }: CategoryHeroPro
     <div className="relative w-full min-h-[260px] sm:min-h-[320px] flex items-center justify-center overflow-hidden bg-[#EAE2D1]">
       {/* Background Banner Image or Gradient */}
       {category.banner_url ? (
-        <img
+        <Image
           src={category.banner_url}
           alt={category.alt_text || category.name}
-          className="absolute inset-0 w-full h-full object-cover object-center brightness-[0.65]"
+          fill
+          className="object-cover object-center brightness-[0.65]"
+          priority
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-[#EAE2D1] via-[#D8CEBA] to-[#C8C7B5]" />

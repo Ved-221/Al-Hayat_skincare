@@ -206,7 +206,7 @@ export async function getOrderByIdWithProductDetails(id: string): Promise<Order 
     throw new Error(`Order not found or deleted (id: ${id})`);
   }
 
-  return data as any;
+  return data as Order & { items: (OrderItem & { product?: { img: string } })[] };
 }
 
 export async function getRecentOrders(limit: number = 5): Promise<Order[]> {
@@ -277,7 +277,14 @@ export async function updateOrderStatus(
   }
 
   // Determine lifecycle timestamp to update
-  const updates: Record<string, any> = {
+  const updates: {
+    status: OrderStatus;
+    updated_by: string;
+    updated_at: string;
+    accepted_at?: string;
+    completed_at?: string;
+    cancelled_at?: string;
+  } = {
     status,
     updated_by: adminId,
     updated_at: new Date().toISOString(),

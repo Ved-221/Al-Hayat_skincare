@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -258,11 +259,14 @@ export default function IngredientsPage() {
                   style={{ height: "120px", background: ing.color }}
                 >
                   {ing.image ? (
-                    <img
-                      src={ing.image}
-                      alt={ing.name}
-                      className="w-24 h-24 object-contain group-hover:scale-110 transition-transform duration-300"
-                    />
+                    <div className="relative w-24 h-24">
+                      <Image
+                        src={ing.image}
+                        alt={ing.name}
+                        fill
+                        className="object-contain group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
                   ) : (
                     <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
                       {ing.emoji}

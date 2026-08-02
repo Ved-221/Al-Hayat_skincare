@@ -36,7 +36,8 @@ export default function CategoryTable({
 
   // Sync state if props change
   React.useEffect(() => {
-    setLocalCategories(categories);
+    const timer = setTimeout(() => setLocalCategories(categories), 0);
+    return () => clearTimeout(timer);
   }, [categories]);
 
   const allSelected =

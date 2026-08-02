@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CreateOrderSchema } from "@/types/order";
-import { useCartStore } from "@/store/cartStore";
 
 // Create a schema specifically for the form inputs
 const CheckoutFormSchema = CreateOrderSchema.pick({

@@ -4,6 +4,7 @@ import { useState, use, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PRODUCTS, Product } from "@/data/products";
+import Image from "next/image";
 import { useCartStore } from "@/store/cartStore";
 import { useWishlistStore } from "@/store/wishlistStore";
 import { Heart } from "lucide-react";
@@ -155,10 +156,11 @@ export default function ProductDetailPage({ params }: Props) {
                 }`}
               />
             </button>
-            <img
-              src={product.img}
+            <Image
+              src={product.img || ""}
               alt={product.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
             />
           </div>
         </div>
@@ -681,10 +683,11 @@ export default function ProductDetailPage({ params }: Props) {
               </p>
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-full overflow-hidden border border-[#c8c7b5]">
-                  <img
+                  <Image
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxoy7RodN7XBiMu155S73O0Vno3hJCIUtJKnjIQWSFhlx2WFvOhtE198Ab23JzqRCZ9GFBqm2fR6NXHtq_1xykdvbd-8UycSwMalfG9-50t8nhy6q3hXftkRQsYMz_9riQNZc3X-tRUzYU0cnKKagC4rXSkPqmWP72E-fjDR2lPrVPwR6023dit2phhmSYDD2F8p38rYlsLgPhT5v7E4AK9V-b5mL0x4BBiot9KuliaKKRFwNuYcri5bEAFlzllSX3fYBUMXjRcK__"
                     alt="Dr. Farheen"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                 </div>
                 <div>

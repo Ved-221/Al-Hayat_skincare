@@ -65,7 +65,8 @@ export default function CategorySelector({
 
   // Reset focus index when filtered list changes
   useEffect(() => {
-    setFocusIndex(0);
+    const timer = setTimeout(() => setFocusIndex(0), 0);
+    return () => clearTimeout(timer);
   }, [filteredCategories.length, searchQuery]);
 
   // Handle outside click to close dropdown

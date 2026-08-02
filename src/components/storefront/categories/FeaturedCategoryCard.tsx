@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { StorefrontCategoryWithCount } from "@/services/storefrontCategoryService";
 
 interface FeaturedCategoryCardProps {
@@ -15,10 +16,11 @@ export default function FeaturedCategoryCard({ category }: FeaturedCategoryCardP
       {/* Aspect Ratio Container */}
       <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#D8CEBA]">
         {category.thumbnail_url ? (
-          <img
+          <Image
             src={category.thumbnail_url}
             alt={category.alt_text || category.name}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#EAE2D1] to-[#C8C7B5] p-6">

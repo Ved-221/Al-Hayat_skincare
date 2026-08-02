@@ -1,18 +1,46 @@
 import { supabase } from "@/lib/supabase";
 import { PRODUCTS, Product } from "@/data/products";
 
+interface DbProduct {
+  id: string | number;
+  name: string;
+  category?: string;
+  category_id?: string | number;
+  categories?: { id: string | number; name: string; slug: string };
+  desc?: string;
+  price?: string | number;
+  price_original?: string | number;
+  priceOriginal?: string | number;
+  discount?: string;
+  badge?: string;
+  ingredients?: string[];
+  benefit?: string;
+  img?: string;
+  slug?: string;
+  suitable_for?: string;
+  suitableFor?: string;
+  tagline?: string;
+  detailed_ingredients?: { name: string; desc: string }[];
+  detailedIngredients?: { name: string; desc: string }[];
+  detailed_benefits?: { icon: string; title: string; sub: string }[];
+  detailedBenefits?: { icon: string; title: string; sub: string }[];
+  ritual?: { icon: string; step: string; desc: string }[];
+}
+
 // Maps database fields back to the local Product interface format
-export function mapDbProduct(dbProduct: any): Product {
+export function mapDbProduct(dbProduct: DbProduct): Product {
   return {
     id: dbProduct.id,
     name: dbProduct.name,
     category: dbProduct.categories?.name || dbProduct.category || "",
-    categoryId: dbProduct.category_id || dbProduct.categories?.id || null,
+    categoryId: dbProduct.category_id 
+      ? String(dbProduct.category_id) 
+      : (dbProduct.categories?.id ? String(dbProduct.categories.id) : null),
     categorySlug: dbProduct.categories?.slug || null,
     desc: dbProduct.desc || "",
-    price: dbProduct.price || "",
-    priceOriginal: dbProduct.price_original || dbProduct.priceOriginal || "",
-    discount: dbProduct.discount || "",
+    price: dbProduct.price ? String(dbProduct.price) : "",
+    priceOriginal: dbProduct.price_original ? String(dbProduct.price_original) : (dbProduct.priceOriginal ? String(dbProduct.priceOriginal) : ""),
+    discount: dbProduct.discount ? String(dbProduct.discount) : "",
     badge: dbProduct.badge || null,
     ingredients: dbProduct.ingredients || [],
     benefit: dbProduct.benefit || "",
@@ -43,8 +71,9 @@ export async function getProducts(): Promise<Product[]> {
     }
 
     return data.map(mapDbProduct);
-  } catch (err: any) {
-    console.error("Failed to fetch products from Supabase:", err);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("Failed to fetch products from Supabase:", msg);
     return PRODUCTS;
   }
 }
@@ -63,8 +92,9 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
     }
 
     return mapDbProduct(data);
-  } catch (err: any) {
-    console.error(`Failed to fetch product by slug "${slug}" from Supabase:`, err);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`Failed to fetch product by slug "${slug}" from Supabase:`, msg);
     return PRODUCTS.find((p) => p.slug === slug) || null;
   }
 }
@@ -83,8 +113,9 @@ export async function getProductsByCategory(categorySlug: string): Promise<Produ
     }
 
     return data.map(mapDbProduct);
-  } catch (err: any) {
-    console.error(`Error fetching products for category slug "${categorySlug}":`, err);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`Error fetching products for category slug "${categorySlug}":`, msg);
     return [];
   }
 }

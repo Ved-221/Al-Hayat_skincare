@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { PRODUCTS } from "@/data/products";
 import { useCartStore } from "@/store/cartStore";
@@ -611,9 +612,11 @@ export default function Home() {
                 : ""
             }`}
           >
-            <img
+            <Image
               src={mediaMap["branding/logo_withoutbg.webp"] || "/logo_withoutbg.png"}
               alt="AL-HAYAT Logo"
+              width={300}
+              height={300}
               style={{
                 width: "clamp(200px, 35vw, 320px)",
                 height: "clamp(200px, 35vw, 320px)",
@@ -660,10 +663,11 @@ export default function Home() {
                   background: "#EAE2D1",
                 }}
               >
-                <img
+                <Image
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuC663Sc3KM_zaIw8CqAE6KJJUKmurCW5lKL6RENlj7i1zaOHZWOwaQ_IFHCwQSGBCIX3RXa099VHx4tFW05po9CkKm_Vnn5QW-3PcCom4zkjtSCX_PS_DTs1pQ1xhzQ23slmSppvyZ7jMAAkC5u-3jYoCflo6Yrac2ZLiWVH8ZU_qEfa554t5h4W7ExszJmplzuFcIkjfRJhukL8zhpag3WSGpdyygkCJMA4PgF1ePHmqeHfrTG-VgmN3uvZkYfNUx1Qq40273S0N2e"
                   alt="AL-HAYAT Botanical Skincare"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
               </div>

@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { WhatsAppOrderPayload } from "@/types/order";
 import { buildOrderMessage, generateWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -9,19 +8,17 @@ interface WhatsAppButtonProps {
 }
 
 export default function WhatsAppButton({ payload }: WhatsAppButtonProps) {
-  const [whatsappUrl, setWhatsappUrl] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  let whatsappUrl: string | null = null;
+  let error: string | null = null;
 
-  useEffect(() => {
-    try {
-      const message = buildOrderMessage(payload);
-      const url = generateWhatsAppUrl(message);
-      setWhatsappUrl(url);
-    } catch (err: any) {
-      console.error("WhatsApp generation error:", err);
-      setError(err.message || "Could not generate WhatsApp link.");
-    }
-  }, [payload]);
+  try {
+    const message = buildOrderMessage(payload);
+    whatsappUrl = generateWhatsAppUrl(message);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("WhatsApp generation error:", msg);
+    error = msg || "Could not generate WhatsApp link.";
+  }
 
   if (error) {
     return (
