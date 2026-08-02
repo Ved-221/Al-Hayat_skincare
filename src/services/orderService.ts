@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase-server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import {
   Order,
   OrderItem,
@@ -47,6 +48,18 @@ export async function createOrder(input: CreateOrderInput): Promise<Order> {
 
   if (error || !newOrderId) {
     throw new Error(`Failed to create order: ${error?.message || "Unknown error"}`);
+  }
+
+  // Update the customer_id if it was provided
+  if (validated.customer_id) {
+    const adminSupabase = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+    await adminSupabase
+      .from("orders")
+      .update({ customer_id: validated.customer_id })
+      .eq("id", newOrderId as string);
   }
 
   // Fetch and return the newly created order

@@ -140,6 +140,7 @@ export const CreateOrderSchema = z.object({
   customer_name: z.string().min(2, "Name must be at least 2 characters"),
   customer_phone: z.string().regex(/^\+?[1-9]\d{9,14}$/, "Invalid phone number format"),
   customer_email: z.string().email("Invalid email address").optional().nullable(),
+  customer_id: z.string().optional().nullable(),
   customer_address: z.string().min(5, "Address must be at least 5 characters"),
   customer_landmark: z.string().optional().nullable(),
   customer_city: z.string().min(2, "City is required"),
