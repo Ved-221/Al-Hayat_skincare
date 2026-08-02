@@ -78,7 +78,7 @@ export default function CheckoutPage() {
         // Clear cart only on success
         clearCart();
         // Use router to redirect to success page
-        router.push(`/order-success?orderNumber=${result.data?.order_number}`);
+        router.push(`/order-success?orderNumber=${(result.data as any)?.order_number}`);
       } else {
         setError(result.error || "Failed to create order. Please try again.");
       }
