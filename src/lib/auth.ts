@@ -20,5 +20,5 @@ export async function requireAdmin() {
     redirect("/");
   }
 
-  return user;
+  return user.user;
 }
