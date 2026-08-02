@@ -1,3 +1,4 @@
+import { resolveImageUrl } from "@/lib/utils";
 import React from "react";
 import Image from "next/image";
 
@@ -21,7 +22,7 @@ export default function CategoryBadge({ category, fallbackName }: CategoryBadgeP
         <div className="relative h-4 w-4 flex-shrink-0 overflow-hidden rounded-full border border-gray-200 bg-white flex items-center justify-center text-[9px]">
         {category?.thumbnail_url ? (
           <Image
-            src={category.thumbnail_url}
+            src={resolveImageUrl(category.thumbnail_url)}
             alt={displayName}
             fill
             sizes="16px"

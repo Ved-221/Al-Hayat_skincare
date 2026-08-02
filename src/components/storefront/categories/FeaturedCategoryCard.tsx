@@ -1,3 +1,4 @@
+import { resolveImageUrl } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import type { StorefrontCategoryWithCount } from "@/services/storefrontCategoryService";
@@ -17,7 +18,7 @@ export default function FeaturedCategoryCard({ category }: FeaturedCategoryCardP
       <div className="relative w-full aspect-[4/5] overflow-hidden bg-[#D8CEBA]">
         {category.thumbnail_url ? (
           <Image
-            src={category.thumbnail_url}
+            src={resolveImageUrl(category.thumbnail_url)}
             alt={category.alt_text || category.name}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"

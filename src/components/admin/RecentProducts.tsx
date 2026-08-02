@@ -1,3 +1,4 @@
+import { resolveImageUrl } from "@/lib/utils";
 /**
  * RecentProducts.tsx
  * ------------------
@@ -65,7 +66,7 @@ export default function RecentProducts({ products }: RecentProductsProps) {
                       {product.img ? (
                         <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
                           <Image
-                            src={product.img}
+                            src={resolveImageUrl(product.img)}
                             alt={product.name}
                             fill
                             sizes="40px"

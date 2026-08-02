@@ -1,4 +1,5 @@
 "use client";
+import { resolveImageUrl } from "@/lib/utils";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -77,7 +78,7 @@ export default function CategoryCard({
                   <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
                     {cat.thumbnail_url ? (
                       <Image
-                        src={cat.thumbnail_url}
+                        src={resolveImageUrl(cat.thumbnail_url)}
                         alt={cat.alt_text || cat.name}
                         fill
                         sizes="48px"

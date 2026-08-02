@@ -1,4 +1,5 @@
 "use client";
+import { resolveImageUrl } from "@/lib/utils";
 
 import { useState, useEffect, Suspense, useMemo } from "react";
 import Link from "next/link";
@@ -381,7 +382,7 @@ function ProductsContent() {
                               {product.badge}
                             </span>
                           )}
-                          <Image src={product.img} alt={product.name} fill className="object-cover" sizes="110px" />
+                          <Image src={resolveImageUrl(product.img)} alt={product.name} fill className="object-cover" sizes="110px" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <p

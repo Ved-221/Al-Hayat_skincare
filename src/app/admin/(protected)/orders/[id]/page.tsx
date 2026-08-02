@@ -1,3 +1,4 @@
+import { resolveImageUrl } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import { requireAdmin } from "@/lib/auth";
@@ -107,7 +108,7 @@ export default async function AdminOrderDetailsPage({ params }: PageProps) {
                         <div className="flex items-center gap-4">
                           {item.product?.img ? (
                             <Image
-                              src={item.product.img}
+                              src={resolveImageUrl(item.product.img)}
                               alt={item.product_name}
                               width={48}
                               height={48}

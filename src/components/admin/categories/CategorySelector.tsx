@@ -1,4 +1,5 @@
 "use client";
+import { resolveImageUrl } from "@/lib/utils";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import type { CategoryDropdownOption } from "@/types/category";
@@ -151,7 +152,7 @@ export default function CategorySelector({
             <div className="relative h-6 w-6 flex-shrink-0 overflow-hidden rounded border border-gray-200 bg-gray-50 flex items-center justify-center text-xs">
               {selectedCategory.thumbnail_url ? (
                 <Image
-                  src={selectedCategory.thumbnail_url}
+                  src={resolveImageUrl(selectedCategory.thumbnail_url)}
                   alt={selectedCategory.name}
                   fill
                   sizes="24px"

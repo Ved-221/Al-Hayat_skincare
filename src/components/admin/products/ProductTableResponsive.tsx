@@ -1,4 +1,5 @@
 "use client";
+import { resolveImageUrl } from "@/lib/utils";
 
 import React from "react";
 import Link from "next/link";
@@ -64,7 +65,7 @@ export default function ProductTableResponsive({ products }: ProductTableRespons
                     <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-lg border border-gray-200 bg-gray-50 flex items-center justify-center">
                       {product.img ? (
                         <Image
-                          src={product.img}
+                          src={resolveImageUrl(product.img)}
                           alt={product.name}
                           fill
                           sizes="44px"
@@ -161,7 +162,7 @@ export default function ProductTableResponsive({ products }: ProductTableRespons
               <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-gray-200 bg-gray-50 flex items-center justify-center">
                 {product.img ? (
                   <Image
-                    src={product.img}
+                    src={resolveImageUrl(product.img)}
                     alt={product.name}
                     fill
                     sizes="64px"
