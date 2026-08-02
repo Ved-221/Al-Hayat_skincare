@@ -32,10 +32,4 @@ export async function requireCustomer() {
   }
 
   return user.user;
-}
-
-export async function logoutAction() {
-  const supabase = await createClient();
-  await supabase.auth.signOut();
-  redirect("/");
-}
+}

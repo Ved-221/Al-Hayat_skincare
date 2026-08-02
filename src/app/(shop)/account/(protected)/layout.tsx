@@ -1,7 +1,7 @@
 import { requireCustomer } from "@/lib/auth";
 import Link from "next/link";
 import { LogOut } from "lucide-react";
-import { logoutAction } from "@/lib/auth";
+import { logoutAction } from "./actions";
 
 export default async function AccountLayout({ children }: { children: React.ReactNode }) {
   await requireCustomer();
