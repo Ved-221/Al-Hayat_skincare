@@ -28,6 +28,9 @@ export interface OrderItem {
   quantity: number;
   line_total: number;
   created_at: string;
+  product?: {
+    img?: string | null;
+  };
 }
 
 export interface Order {
