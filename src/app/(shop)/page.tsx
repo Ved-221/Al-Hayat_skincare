@@ -414,7 +414,7 @@ export default function Home() {
     let animId: number;
     const updateFrame = () => {
       const video = videoRef.current;
-      if (video && !video.seeking) {
+      if (video && !video.seeking && !isMobile) {
         const target = targetTimeRef.current;
         const diff = Math.abs(video.currentTime - target);
         if (diff > 0.02) {
@@ -429,7 +429,7 @@ export default function Home() {
     };
     animId = requestAnimationFrame(updateFrame);
     return () => cancelAnimationFrame(animId);
-  }, []);
+  }, [isMobile]);
 
   // Initialize GSAP ScrollTrigger
   useEffect(() => {
@@ -467,7 +467,42 @@ export default function Home() {
         const duration = video.duration;
         if (isNaN(duration) || duration === 0) return;
 
-        // Mobile: Reverse video scroll animation (start at duration, scrub to 0)
+        const scrollDist = isMobile ? 2200 : 3500;
+
+        if (isMobile) {
+          // Mobile: Autoplay video, disable scrub, ignore resize
+          video.loop = true;
+          video.play().catch(() => {});
+          
+          gsap.to(container, {
+            scrollTrigger: {
+              trigger: container,
+              start: "top top",
+              end: () => `+=${scrollDist}`,
+              pin: true,
+              scrub: false,
+              invalidateOnRefresh: false,
+              onUpdate: (self) => {
+                if (progressFillRef.current) {
+                  progressFillRef.current.style.width = `${self.progress * 100}%`;
+                }
+                if (scrollHintRef.current) {
+                  if (self.scroll() > 100) {
+                    scrollHintRef.current.style.opacity = "0";
+                    scrollHintRef.current.style.transform = "translate(-50%, 20px)";
+                    scrollHintRef.current.style.pointerEvents = "none";
+                  } else {
+                    scrollHintRef.current.style.opacity = "1";
+                    scrollHintRef.current.style.transform = "translate(-50%, 0)";
+                    scrollHintRef.current.style.pointerEvents = "auto";
+                  }
+                }
+              },
+            },
+          });
+          return;
+        }
+
         // Desktop: Forward video scroll animation (start at 0, scrub to duration)
         const startVal = 0;
         const targetVal = duration;
@@ -475,8 +510,6 @@ export default function Home() {
         video.currentTime = startVal;
         targetTimeRef.current = startVal;
         const proxy = { currentTime: startVal };
-
-        const scrollDist = isMobile ? 2200 : 3500;
 
         gsap.to(proxy, {
           currentTime: targetVal,
@@ -486,7 +519,7 @@ export default function Home() {
             start: "top top",
             end: () => `+=${scrollDist}`,
             pin: true,
-            scrub: isMobile ? 0.8 : 1.2,
+            scrub: 1.2,
             invalidateOnRefresh: true,
             onUpdate: (self) => {
               if (!isNaN(proxy.currentTime)) {
