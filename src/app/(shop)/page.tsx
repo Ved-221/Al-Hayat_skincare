@@ -470,36 +470,9 @@ export default function Home() {
         const scrollDist = isMobile ? 2200 : 3500;
 
         if (isMobile) {
-          // Mobile: Autoplay video, disable scrub, ignore resize
-          video.loop = true;
+          // Mobile: Play video once (no loop), disable scrub and pinning so user can scroll immediately
+          video.loop = false;
           video.play().catch(() => {});
-          
-          gsap.to(container, {
-            scrollTrigger: {
-              trigger: container,
-              start: "top top",
-              end: () => `+=${scrollDist}`,
-              pin: true,
-              scrub: false,
-              invalidateOnRefresh: false,
-              onUpdate: (self) => {
-                if (progressFillRef.current) {
-                  progressFillRef.current.style.width = `${self.progress * 100}%`;
-                }
-                if (scrollHintRef.current) {
-                  if (self.scroll() > 100) {
-                    scrollHintRef.current.style.opacity = "0";
-                    scrollHintRef.current.style.transform = "translate(-50%, 20px)";
-                    scrollHintRef.current.style.pointerEvents = "none";
-                  } else {
-                    scrollHintRef.current.style.opacity = "1";
-                    scrollHintRef.current.style.transform = "translate(-50%, 0)";
-                    scrollHintRef.current.style.pointerEvents = "auto";
-                  }
-                }
-              },
-            },
-          });
           return;
         }
 
@@ -558,9 +531,9 @@ export default function Home() {
     };
   }, [isLoaded, introPlaying, reducedMotion, isMobile, videoSrc]);
 
-  // Fallback scroll listener for scroll hint when reduced motion is active
+  // Fallback scroll listener for scroll hint when reduced motion is active or on mobile
   useEffect(() => {
-    if (!reducedMotion || !isLoaded || introPlaying) return;
+    if ((!reducedMotion && !isMobile) || !isLoaded || introPlaying) return;
 
     const handleScroll = () => {
       if (scrollHintRef.current) {
@@ -622,7 +595,7 @@ export default function Home() {
 
       {/* ── Progress Bar ── */}
       <div
-        className={`fixed bottom-0 left-0 w-full h-[3px] z-[90] bg-white/5 transition-opacity duration-500 ${isLoaded && !introPlaying && !reducedMotion ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`fixed bottom-0 left-0 w-full h-[3px] z-[90] bg-white/5 transition-opacity duration-500 ${isLoaded && !introPlaying && !reducedMotion && !isMobile ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
       >
         <div
